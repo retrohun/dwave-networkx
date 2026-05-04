@@ -231,14 +231,6 @@ its member pairs.
     maximum_independent_set
     is_independent_set
 
-Helper Functions
-----------------
-
-.. autosummary::
-    :toctree: generated/
-
-    maximum_weighted_independent_set_qubo
-
 .. _graphs_partitioning:
 
 Partitioning
