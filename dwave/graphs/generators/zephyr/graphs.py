@@ -1,5 +1,4 @@
-# Copyright 2021 D-Wave Systems Inc.
-#
+# Copyright 2021 D-Wave Systems Inc.#
 #    Licensed under the Apache License, Version 2.0 (the "License");
 #    you may not use this file except in compliance with the License.
 #    You may obtain a copy of the License at
@@ -19,16 +18,16 @@ from itertools import product
 
 import networkx as nx
 
-from .chimera import _chimera_coordinates_cache
+from dwave.graphs.generators.chimera import _chimera_coordinates_cache
+from dwave.graphs.generators.common import _add_compatible_edges, _add_compatible_nodes, _add_compatible_terms
 
-from .common import _add_compatible_edges, _add_compatible_nodes, _add_compatible_terms
+__all__ = [
+    "zephyr_graph",
+    "zephyr_sublattice_mappings",
+    "zephyr_torus",
+    "zephyr_four_color",
+]
 
-__all__ = ['zephyr_graph',
-           'zephyr_coordinates',
-           'zephyr_sublattice_mappings',
-           'zephyr_torus',
-           'zephyr_four_color',
-           ]
 
 def zephyr_graph(m, t=4, create_using=None, node_list=None, edge_list=None,
                  data=True, coordinates=False, check_node_list=False,
@@ -250,182 +249,6 @@ def zephyr_graph(m, t=4, create_using=None, node_list=None, edge_list=None,
     return G
 
 
-# Developer note: we could implement a function that creates the iter_*_to_* and
-# iter_*_to_*_pairs methods just-in-time, but there are a small enough number
-# that for now it makes sense to do them by hand.
-class zephyr_coordinates(object):
-    """Provides coordinate converters for the Zephyr indexing schemes.
-
-    Parameters
-    ----------
-    m : int
-        Grid parameter for the Zephyr lattice.
-    t : int
-        Tile parameter for the Zephyr lattice; must be even.
-
-    See also
-    --------
-    :func:`.zephyr_graph` : Describes the various coordinate conventions.
-
-    """
-    def __init__(self, m, t=4):
-        self.args = m, 2 * m + 1, t
-
-    def zephyr_to_linear(self, q):
-        """Converts a 5-term Zephyr coordinate into a linear index.
-
-        Parameters
-        ----------
-        q : 5-tuple
-            Zephyr coordinate.
-
-        Examples
-        --------
-        >>> dwave.graphs.zephyr_coordinates(2).zephyr_to_linear((0, 1, 2, 1, 0))
-        26
-        """
-        u, w, k, j, z = q
-        m, M, t = self.args
-        return (((u * M + w) * t + k) * 2 + j) * m + z
-
-    def linear_to_zephyr(self, r):
-        """Converts a linear index into a 5-term Zephyr coordinate.
-
-        Parameters
-        ----------
-        r : int
-            Linear index.
-
-        Examples
-        --------
-        >>> dwave.graphs.zephyr_coordinates(2).linear_to_zephyr(137)
-        (1, 3, 2, 0, 1)
-
-        """
-        m, M, t = self.args
-        r, z = divmod(r, m)
-        r, j = divmod(r, 2)
-        r, k = divmod(r, t)
-        u, w = divmod(r, M)
-        return u, w, k, j, z
-
-    def iter_zephyr_to_linear(self, qlist):
-        """Converts a sequence of 5-term Zephyr coordinates to linear indices.
-        """
-        m, M, t = self.args
-        for (u, w, k, j, z) in qlist:
-            yield (((u * M + w) * t + k) * 2 + j) * m + z
-
-    def iter_linear_to_zephyr(self, rlist):
-        """Converts a sequence of linear indices to 5-term Zephyr coordinates.
-        """
-        m, M, t = self.args
-        for r in rlist:
-            r, z = divmod(r, m)
-            r, j = divmod(r, 2)
-            r, k = divmod(r, t)
-            u, w = divmod(r, M)
-            yield u, w, k, j, z
-
-    @staticmethod
-    def _pair_repack(f, plist):
-        """Flattens a sequence of pairs to pass through ``f``, and then
-        re-pairs the result.
-        """
-        ulist = f(u for p in plist for u in p)
-        for u in ulist:
-            v = next(ulist)
-            yield u, v
-
-    def iter_zephyr_to_linear_pairs(self, plist):
-        """Converts pairs of 5-term Zephyr coordinates to pairs of linear indices.
-        """
-        return self._pair_repack(self.iter_zephyr_to_linear, plist)
-
-    def iter_linear_to_zephyr_pairs(self, plist):
-        """Converts pairs of linear indices to pairs of 5-term Zephyr coordinates.
-        """
-        return self._pair_repack(self.iter_linear_to_zephyr, plist)
-
-    def graph_to_linear(self, g):
-        """Returns a copy of the graph ``g`` relabeled to have linear indices.
-        
-        Parameters
-        ----------
-        g : NetworkX Graph
-            The Zephyr graph to be relabeled.        
-        
-        Returns
-        -------
-        G : NetworkX Graph
-            A Zephyr graph relabeled with linear indices.
-        """
-        labels = g.graph.get('labels')
-        if labels == 'int':
-            return g.copy()
-        elif labels == 'coordinate':
-            nodes = self.iter_zephyr_to_linear(g)
-            edges = self.iter_zephyr_to_linear_pairs(g.edges)
-        else:
-            raise ValueError(
-                f"Node labeling {labels} not recognized. "
-                "Input must be generated by dwave.graphs.zephyr_graph."
-            )
-
-        return zephyr_graph(
-            g.graph['rows'],
-            t = g.graph['tile'],
-            node_list=nodes,
-            edge_list=edges,
-            data=g.graph['data'],
-        )
-
-    def graph_to_zephyr(self, g):
-        """Returns a copy of the graph ``g`` relabeled to have Zephyr coordinates.
-        
-        Parameters
-        ----------
-        g : NetworkX Graph
-            The Zephyr graph to be relabeled.        
-        
-        Returns
-        -------
-        G : NetworkX Graph
-            A Zephyr graph relabeled with Zephyr coordinates.
-        """
-        labels = g.graph.get('labels')
-        if labels == 'int':
-            nodes = self.iter_linear_to_zephyr(g)
-            edges = self.iter_linear_to_zephyr_pairs(g.edges)
-        elif labels == 'coordinate':
-            return g.copy()
-        else:
-            raise ValueError(
-                f"Node labeling {labels} not recognized. "
-                "Input must be generated by dwave.graphs.zephyr_graph."
-            )
-
-        return zephyr_graph(
-            g.graph['rows'],
-            t=g.graph['tile'],
-            node_list=nodes,
-            edge_list=edges,
-            data=g.graph['data'],
-            coordinates=True,
-        )
-
-
-class __zephyr_coordinates_cache_dict(dict):
-    """An internal-use cached factory for `zephyr_coordinates` objects"""
-
-    def __missing__(self, key):
-        self[key] = val = zephyr_coordinates(*key)
-        return val
-
-
-_zephyr_coordinates_cache = __zephyr_coordinates_cache_dict()
-
-
 def _zephyr_zephyr_sublattice_mapping(source_to_zephyr, zephyr_to_target, offset):
     """Constructs a mapping from a Zephyr graph to a Zephyr graph, via an offset.
     This function is used by zephyr_sublattice_mappings, and serves to construct
@@ -476,6 +299,7 @@ def _zephyr_zephyr_sublattice_mapping(source_to_zephyr, zephyr_to_target, offset
     mapping.offset = offset
 
     return mapping
+
 
 def _single_chimera_zephyr_sublattice_mapping(source_to_chimera, zephyr_to_target, offset):
     """Constructs a mapping from a Chimera graph to a Zephyr graph, via an offset.
@@ -532,6 +356,7 @@ def _single_chimera_zephyr_sublattice_mapping(source_to_chimera, zephyr_to_targe
     mapping.offset = offset
 
     return mapping
+
 
 def _double_chimera_zephyr_sublattice_mapping(source_to_chimera, zephyr_to_target, offset):
     """Constructs a mapping from a Chimera graph to a Zephyr graph, via an offset.
@@ -646,6 +471,9 @@ def zephyr_sublattice_mappings(source, target, offset_list=None):
     if target.graph.get('family') != 'zephyr':
         raise ValueError("Source graph must be a Zephyr graph constructed by dwave.graphs.zephyr_graph")
 
+    # import for single use below; avoids circular import
+    from dwave.graphs.generators.zephyr.coords import _zephyr_coordinates_cache
+
     m_t = target.graph['rows']
     t = target.graph['tile']
     labels_t = target.graph['labels']
@@ -714,6 +542,7 @@ def zephyr_sublattice_mappings(source, target, offset_list=None):
 
     for offset in offset_list:
         yield make_mapping(source_to_inner, zephyr_to_target, offset)
+
 
 def zephyr_torus(m, t=4, node_list=None, edge_list=None):
     """
