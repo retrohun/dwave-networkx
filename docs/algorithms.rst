@@ -74,9 +74,7 @@ The map-coloring problem is to assign a color to each region of a map
 
     is_vertex_coloring
     min_vertex_color
-    min_vertex_color_qubo
     vertex_color
-    vertex_color_qubo
 
 .. _graphs_cover:
 
