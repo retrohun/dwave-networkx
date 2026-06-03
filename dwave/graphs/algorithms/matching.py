@@ -12,62 +12,63 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 
+from collections.abc import Hashable
+
 import dimod
+from dimod.decorators import graph_argument
+from dimod.typing import GraphLike
 
 __all__ = ['maximal_matching',
            'min_maximal_matching',
            ]
 
 
-def maximal_matching(G, sampler, **sampler_args):
+@graph_argument('graph')
+def maximal_matching(graph: GraphLike,
+                     sampler: dimod.Sampler,
+                     **sampler_args,
+                     ) -> set[Hashable]:
     """Finds an approximate maximal matching.
 
-    Defines a BQM with ground states corresponding to a maximal
-    matching and uses the sampler to sample from it.
+    Defines a BQM with ground states corresponding to a maximal matching and
+    uses the sampler to sample from it.
 
-    A matching is a subset of edges in which no node occurs more than
-    once. A maximal matching is one in which no edges from G can be
-    added without violating the matching rule.
+    A `matching`_ is a subset of edges in which no node occurs more than once.
+    A maximal matching is one in which no edges from ``graph`` can be added
+    without violating the matching rule.
 
     Finding maximal matchings can be done is polynomial time, so this method
     is only useful pedagogically.
 
-    Parameters
-    ----------
-    G : NetworkX graph
-        The graph on which to find a maximal matching.
+    Args:
+        graph:
+            The graph on which to find a maximal matching. Either an integer
+            ``n``, interpreted as a complete graph of size ``n``, a nodes/edges
+            pair, a list of edges or a NetworkX graph.
 
-    sampler : :class:`dimod.Sampler`
-        A dimod sampler.
+        sampler:
+            A dimod sampler.
 
-    sampler_args
-        Additional keyword parameters are passed to the sampler.
+        **sampler_args:
+            Additional keyword parameters are passed to the sampler.
 
-    Returns
-    -------
-    matching : set
+    Returns:
         A maximal matching of the graph.
 
-    Notes
-    -----
-    Samplers by their nature may not return the optimal solution. This
-    function does not attempt to confirm the quality of the returned
-    sample.
+    Note:
+        Samplers by their nature may not return the optimal solution. This
+        function does not attempt to confirm the quality of the returned sample.
 
-    References
-    ----------
-
-    `Matching on Wikipedia <https://w.wiki/r9s>`_
-
-    `QUBO on Wikipedia <https://w.wiki/r9t>`_
+    .. _matching: https://en.wikipedia.org/wiki/Matching_(graph_theory)
 
     Based on the formulation presented in [Luc2014]_.
-
     """
-    if not G.edges:
+    nodes, edges = graph
+
+    if not edges:
         return set()
 
-    bqm = dimod.generators.maximal_matching(G)
+    bqm = dimod.generators.maximal_matching(graph)
     sampleset = sampler.sample(bqm, **sampler_args)
     sample = sampleset.first.sample
 
@@ -75,65 +76,62 @@ def maximal_matching(G, sampler, **sampler_args):
     return set(tuple(edge) for edge, val in sample.items() if val > 0)
 
 
-def min_maximal_matching(G, sampler, **sampler_args):
+@graph_argument('graph')
+def min_maximal_matching(graph: GraphLike,
+                         sampler: dimod.Sampler,
+                         **sampler_args,
+                         ) -> set[Hashable]:
     """Returns an approximate minimum maximal matching.
 
-    Defines a BQM with ground states corresponding to a minimum
-    maximal matching and uses the sampler to sample from it.
+    Defines a BQM with ground states corresponding to a minimum maximal matching
+    and uses the sampler to sample from it.
 
-    A matching is a subset of edges in which no node occurs more than
-    once. A maximal matching is one in which no edges from G can be
-    added without violating the matching rule. A minimum maximal
-    matching is the smallest maximal matching for G.
+    A `matching`_ is a subset of edges in which no node occurs more than once.
+    A maximal matching is one in which no edges from ``graph`` can be added
+    without violating the matching rule. A minimum maximal matching is the
+    smallest maximal matching for ``graph``.
 
-    Parameters
-    ----------
-    G : NetworkX graph
-        The graph on which to find a minimum maximal matching.
+    Args:
+        graph:
+            The graph on which to find a minimum maximal matching. Either an
+            integer ``n``, interpreted as a complete graph of size ``n``, a
+            nodes/edges pair, a list of edges or a NetworkX graph.
 
-    sampler : :class:`dimod.Sampler`
-        A dimod sampler.
+        sampler:
+            A dimod sampler.
 
-    sampler_args
-        Additional keyword parameters are passed to the sampler.
+        **sampler_args:
+            Additional keyword parameters are passed to the sampler.
 
-    Returns
-    -------
-    matching : set
+    Returns:
         A minimum maximal matching of the graph.
 
-    Example
-    -------
-    This example uses a sampler from
-    `dimod <https://github.com/dwavesystems/dimod>`_ to find a minimum maximal
-    matching for a Chimera unit cell.
+    Example:
+        This example uses a sampler from
+        `dimod <https://github.com/dwavesystems/dimod>`_ to find a minimum maximal
+        matching for a Chimera unit cell.
 
-    >>> import dimod
-    >>> sampler = dimod.ExactSolver()
-    >>> G = dwave.graphs.chimera_graph(1, 1, 4)
-    >>> matching = dwave.graphs.min_maximal_matching(G, sampler)
+        >>> import dimod
+        >>> sampler = dimod.ExactSolver()
+        >>> G = dwave.graphs.chimera_graph(1, 1, 4)
+        >>> matching = dwave.graphs.min_maximal_matching(G, sampler)
 
-    Notes
-    -----
-    Samplers by their nature may not return the optimal solution. This
-    function does not attempt to confirm the quality of the returned
-    sample.
+    Note:
+        Samplers by their nature may not return the optimal solution. This
+        function does not attempt to confirm the quality of the returned sample.
 
-    References
-    ----------
+    .. _matching: https://en.wikipedia.org/wiki/Matching_(graph_theory)
 
-    `Matching on Wikipedia <https://w.wiki/r9s>`_
-
-    `QUBO on Wikipedia <https://w.wiki/r9t>`_
-
-    Lucas, A. (2014). Ising formulations of many NP problems.
-    Frontiers in Physics, Volume 2, Article 5.
-
+    References:
+        Lucas, A. (2014). Ising formulations of many NP problems.
+        Frontiers in Physics, Volume 2, Article 5.
     """
-    if not G.edges:
+    nodes, edges = graph
+
+    if not edges:
         return set()
 
-    bqm = dimod.generators.min_maximal_matching(G)
+    bqm = dimod.generators.min_maximal_matching(graph)
     sampleset = sampler.sample(bqm, **sampler_args)
     sample = sampleset.first.sample
 
