@@ -14,7 +14,8 @@
 
 import dimod
 
-__all__ = ['sample_markov_network', 'markov_network_bqm']
+__all__ = ['sample_markov_network',
+           ]
 
 
 ###############################################################################
@@ -56,8 +57,8 @@ def sample_markov_network(MN, sampler, fixed_variables=None,
 
     Parameters
     ----------
-    G : NetworkX graph
-        A Markov Network as returned by :func:`.markov_network`
+    MN : NetworkX graph
+        A Markov network as returned by :func:`~dwave.graphs.generators.markov.markov_network`
 
     sampler : :class:`dimod.Sampler`
         A dimod sampler.
@@ -127,7 +128,7 @@ def sample_markov_network(MN, sampler, fixed_variables=None,
 
     """
 
-    bqm = markov_network_bqm(MN)
+    bqm = dimod.generators.markov_network(MN)
 
     if fixed_variables:
         # we can modify in-place since we just made it
@@ -143,60 +144,3 @@ def sample_markov_network(MN, sampler, fixed_variables=None,
         return sampleset
     else:
         return list(map(dict, sampleset.samples()))
-
-
-def markov_network_bqm(MN):
-    """Construct a binary quadratic model for a markov network.
-
-    Parameters
-    ----------
-    G : NetworkX graph
-        A Markov Network as returned by :func:`.markov_network`
-
-    Returns
-    -------
-    bqm : :class:`dimod.BinaryQuadraticModel`
-        A binary quadratic model.
-
-    """
-
-    bqm = dimod.BinaryQuadraticModel.empty(dimod.BINARY)
-
-    # the variable potentials
-    for v, ddict in MN.nodes(data=True, default=None):
-        potential = ddict.get('potential', None)
-
-        if potential is None:
-            continue
-
-        # for single nodes we don't need to worry about order
-
-        phi0 = potential[(0,)]
-        phi1 = potential[(1,)]
-
-        bqm.add_variable(v, phi1 - phi0)
-        bqm.offset += phi0
-
-    # the interaction potentials
-    for u, v, ddict in MN.edges(data=True, default=None):
-        potential = ddict.get('potential', None)
-
-        if potential is None:
-            continue
-
-        # in python<=3.5 the edge order might not be consistent so we use the
-        # one that was stored
-        order = ddict['order']
-        u, v = order
-
-        phi00 = potential[(0, 0)]
-        phi01 = potential[(0, 1)]
-        phi10 = potential[(1, 0)]
-        phi11 = potential[(1, 1)]
-
-        bqm.add_variable(u, phi10 - phi00)
-        bqm.add_variable(v, phi01 - phi00)
-        bqm.add_interaction(u, v, phi11 - phi10 - phi01 + phi00)
-        bqm.offset += phi00
-
-    return bqm

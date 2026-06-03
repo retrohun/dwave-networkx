@@ -147,7 +147,6 @@ Markov Networks
     :toctree: generated/
 
     sample_markov_network
-    markov_network_bqm
 
 .. _graphs_matching:
 
