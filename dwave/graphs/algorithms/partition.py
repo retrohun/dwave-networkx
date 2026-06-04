@@ -13,63 +13,73 @@
 #    limitations under the License.
 
 import math
+from collections.abc import Hashable, Mapping
 
 import dimod
+from dimod.typing import GraphLike
+from dimod.decorators import graph_argument
 
 __all__ = ["partition",
            ]
 
 
-def partition(G, sampler, num_partitions=2, **sampler_args):
-    """Returns an approximate k-partition of G.
+@graph_argument('graph', as_networkx=True)
+def partition(graph: GraphLike,
+              sampler: dimod.Sampler,
+              num_partitions: int = 2,
+              **sampler_args,
+              ) -> Mapping[Hashable, int]:
+    """Return an approximate k-partition of ``graph``.
 
-    Defines an CQM with ground states corresponding to a
-    balanced k-partition of G and uses the sampler to sample from it.
-    A k-partition is a collection of k subsets of the vertices
-    of G such that each vertex is in exactly one subset, and
-    the number of edges between vertices in different subsets
-    is as small as possible. If G is a weighted graph, the sum
-    of weights over those edges are minimized.
+    Defines a CQM with ground states corresponding to a balanced k-partition of
+    ``graph`` and uses the sampler to sample from it.
+    A k-partition is a collection of k subsets of the vertices of ``graph`` such
+    that each vertex is in exactly one subset, and the number of edges between
+    vertices in different subsets is as small as possible. If ``graph`` is a
+    weighted graph, the sum of weights over those edges are minimized.
 
-    Parameters
-    ----------
-    G : NetworkX graph
-        The graph to partition.
-    sampler : :class:`dimod.Sampler`
-        A dimod sampler.
-    num_partitions : int, optional (default 2)
-        The number of subsets in the desired partition.
-    sampler_args
-        Additional keyword parameters are passed to the sampler.
+    Args:
+        graph:
+            The graph to partition. Either an integer ``n``, interpreted as a
+            complete graph of size ``n``, a nodes/edges pair, a list of edges or
+            a NetworkX graph. When NetworkX graph is provided, optional edge
+            weights can be provided in the ``weight`` attribute.
 
-    Returns
-    -------
-    node_partition : dict
+        sampler:
+            A dimod sampler.
+
+        num_partitions:
+            The number of subsets in the desired partition.
+
+        **sampler_args:
+            Additional keyword parameters are passed to the sampler.
+
+    Returns:
         The partition as a dictionary mapping each node to subsets labelled
         as integers 0, 1, 2, ... num_partitions.
 
-    Example
-    -------
-    This example uses a sampler from
-    `dimod <https://github.com/dwavesystems/dimod>`_ to find a 2-partition
-    for a graph of a Chimera unit cell created using the `chimera_graph()`
-    function.
+    Example:
+        This example uses a dimod reference sampler
+        :class:`~dimod.reference.samplers.ExactCQMSolver` to find a 2-partition
+        for a graph of a Chimera unit cell created using the
+        :meth:`~dwave.graphs.generators.chimera.chimera_graph` function.
 
-    >>> import dimod
-    >>> sampler = dimod.ExactCQMSolver()
-    >>> G = dwave.graphs.chimera_graph(1, 1, 4)
-    >>> partitions = dwave.graphs.partition(G, sampler=sampler)
+        >>> import dimod
+        >>> import dwave.graphs
+        ...
+        >>> sampler = dimod.ExactCQMSolver()
+        >>> G = dwave.graphs.chimera_graph(1, 1, 4)
+        >>> partitions = dwave.graphs.partition(G, sampler=sampler)
 
-    Notes
-    -----
-    Samplers by their nature may not return the optimal solution. This
-    function does not attempt to confirm the quality of the returned
-    sample.
+    Note:
+        Samplers by their nature may not return the optimal solution. This
+        function does not attempt to confirm the quality of the returned sample.
+
     """
-    if not len(G.nodes):
+    if not len(graph.nodes):
         return {}
 
-    cqm = dimod.generators.graph_partition(G, num_partitions)
+    cqm = dimod.generators.graph_partition(graph, num_partitions)
 
     # Solve the problem using the CQM solver
     response = sampler.sample_cqm(cqm, **sampler_args)
@@ -81,7 +91,8 @@ def partition(G, sampler, num_partitions=2, **sampler_args):
         raise RuntimeError("No feasible solution could be found for this problem instance.")
 
     # Reinterpret result as partition assignment over nodes
-    indicators = (key for key, value in possible_partitions.first.sample.items() if math.isclose(value, 1.))
+    indicators = (key for key, value in possible_partitions.first.sample.items()
+                  if math.isclose(value, 1.))
     node_partition = {key[0]: key[1] for key in indicators}
 
     return node_partition
