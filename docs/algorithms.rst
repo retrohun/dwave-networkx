@@ -300,4 +300,4 @@ weighted graph.
     :toctree: generated/
 
     traveling_salesperson
-    traveling_salesperson_qubo
+    is_hamiltonian_path
