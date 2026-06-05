@@ -25,7 +25,6 @@ __all__ = [
     "zephyr_graph",
     "zephyr_sublattice_mappings",
     "zephyr_torus",
-    "zephyr_four_color",
 ]
 
 
@@ -628,34 +627,3 @@ def zephyr_torus(m, t=4, node_list=None, edge_list=None):
     G.graph['boundary_condition'] = 'torus'
 
     return G
-
-
-def zephyr_four_color(q, scheme=0):
-    """Node color assignment sufficient for four coloring of a Zephyr graph.
-
-    Parameters
-    ----------
-        q : tuple
-            Qubit label in standard coordinate format: u, w, k, j, z
-        scheme : int
-            Two patterns not related by automorphism are supported 
-    Returns
-    -------
-        color : int
-            Colors 0, 1, 2 or 3
-    Examples
-    ========
-    A mapping of every qubit (default integer labels) in the Zephyr[m, t]
-    graph to one of 4 colors
-    >>> m = 2
-    >>> G = dwave.graphs.zephyr_graph(m, coordinates=True)
-    >>> colors = {q: dwave.graphs.zephyr_four_color(q) for q in G.nodes()}
-    """
-    u, w, _, j, z = q
-    
-    if scheme == 0:
-        return j + ((w + 2*(z+u) + j)&2)
-    elif scheme == 1:
-        return (2*u + w + 2*z + j) & 3
-    else:
-        raise ValueError('Unknown scheme')

@@ -27,7 +27,6 @@ __all__ = ['pegasus_graph',
            'pegasus_coordinates',
            'pegasus_sublattice_mappings',
            'pegasus_torus',
-           'pegasus_four_color',
            ]
 
 
@@ -1204,26 +1203,3 @@ def pegasus_torus(m, node_list=None, edge_list=None,
     G.graph['boundary_condition'] = 'torus'
     
     return G
-
-def pegasus_four_color(q):
-    """Node color assignment sufficient for four coloring of a pegasus graph.
-
-    Parameters
-    ----------
-        q : tuple
-            Qubit label in standard coordinate format.
-
-    Returns
-    -------
-        color : int
-            Colors 0, 1, 2 or 3
-    Examples
-    ========
-    A mapping of every qubit (default integer labels) in the Pegasus[m]
-    graph to one of 4 colors
-    >>> m = 2
-    >>> G = dwave.graphs.pegasus_graph(m, coordinates=True)
-    >>> colors = {q: dwave.graphs.pegasus_four_color(q) for q in G.nodes()}
-    """
-    u, w, k, z = q
-    return 2 * u + ((k ^ z) & 1)
