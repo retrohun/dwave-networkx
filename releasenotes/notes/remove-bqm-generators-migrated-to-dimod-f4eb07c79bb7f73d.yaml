@@ -1,0 +1,29 @@
+---
+prelude: >
+    Binary quadratic model (i.e. Ising model and QUBO) generators have been
+    moved from ``dwave.graphs.algorithms`` to ``dimod.generators``.
+upgrade:
+  - |
+    All BQM/Ising/QUBO generators from ``dwave.graphs.algorithms`` have been
+    migrated to ``dimod.generators`` (released in ``dimod==0.12.22``):
+
+    - ``min_vertex_color_qubo`` and ``vertex_color_qubo`` removed from
+      ``dwave.graphs.algorithms.coloring`` in favor of ``min_vertex_coloring``
+      and ``vertex_coloring`` from ``dimod.generators.coloring``,
+
+    - ``dwave.graphs.algorithms.markov.markov_network_bqm`` removed in favor of
+      ``dimod.generators.markov.markov_network``,
+
+    - ``matching_bqm``, ``maximal_matching_bqm`` and ``min_maximal_matching_bqm``
+      removed from ``dwave.graphs.algorithms.matching`` in favor of
+      ``maximal_matching`` and ``min_maximal_matching`` from
+      ``dimod.generators.matching``,
+
+    - ``dwave.graphs.algorithms.partition.graph_partition_cqm`` removed in
+      favor of ``dimod.generators.partition.graph_partition``,
+
+    - ``dwave.graphs.algorithms.social.structural_imbalance_ising`` removed in
+      favor of ``dimod.generators.social.structural_imbalance`` and
+
+    - ``dwave.graphs.algorithms.tsp.traveling_salesperson_qubo`` removed in
+      favor of ``dimod.generators.tsp.traveling_salesperson``.
