@@ -277,7 +277,6 @@ friendly/hostile interactions between vertices.
     :toctree: generated/
 
     structural_imbalance
-    structural_imbalance_ising
 
 .. _graphs_traveling_salesperson:
 
