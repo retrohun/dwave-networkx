@@ -27,3 +27,5 @@ upgrade:
 
     - ``dwave.graphs.algorithms.tsp.traveling_salesperson_qubo`` removed in
       favor of ``dimod.generators.tsp.traveling_salesperson``.
+  - |
+    Drop support for ``dimod<0.12.22``.
