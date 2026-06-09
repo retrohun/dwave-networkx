@@ -18,9 +18,9 @@ from random import random
 
 import networkx as nx
 
-from dwave.graphs.generators.pegasus import pegasus_coordinates
-from dwave.graphs.generators.zephyr import zephyr_coordinates
-from dwave.graphs.generators.chimera import chimera_coordinates
+from dwave.graphs.topologies.pegasus import pegasus_coordinates
+from dwave.graphs.topologies.zephyr import zephyr_coordinates
+from dwave.graphs.topologies.chimera import chimera_coordinates
 
 __all__ = ['is_almost_simplicial',
            'is_simplicial',

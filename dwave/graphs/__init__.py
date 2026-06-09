@@ -12,8 +12,8 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 
-import dwave.graphs.generators
-from dwave.graphs.generators import *
+import dwave.graphs.topologies
+from dwave.graphs.topologies import *
 
 import dwave.graphs.algorithms
 from dwave.graphs.algorithms import *

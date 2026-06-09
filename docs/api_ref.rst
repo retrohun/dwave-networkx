@@ -9,5 +9,5 @@ API Reference
 
     algorithms
     drawing
-    generators
+    topologies
     utilities

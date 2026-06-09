@@ -12,5 +12,5 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 
-from dwave.graphs.generators.zephyr.coords import *
-from dwave.graphs.generators.zephyr.graphs import *
+from dwave.graphs.topologies.zephyr.coords import *
+from dwave.graphs.topologies.zephyr.graphs import *

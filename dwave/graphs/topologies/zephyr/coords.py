@@ -19,7 +19,7 @@
 __all__ = ["zephyr_coordinates"]
 
 
-from dwave.graphs.generators.zephyr.graphs import zephyr_graph
+from dwave.graphs.topologies.zephyr.graphs import zephyr_graph
 
 
 class zephyr_coordinates(object):

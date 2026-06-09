@@ -18,8 +18,8 @@ from itertools import product
 
 import networkx as nx
 
-from dwave.graphs.generators.chimera import _chimera_coordinates_cache
-from dwave.graphs.generators.common import _add_compatible_edges, _add_compatible_nodes, _add_compatible_terms
+from dwave.graphs.topologies.chimera import _chimera_coordinates_cache
+from dwave.graphs.topologies.common import _add_compatible_edges, _add_compatible_nodes, _add_compatible_terms
 
 __all__ = [
     "zephyr_graph",
@@ -471,7 +471,7 @@ def zephyr_sublattice_mappings(source, target, offset_list=None):
         raise ValueError("Source graph must be a Zephyr graph constructed by dwave.graphs.zephyr_graph")
 
     # import for single use below; avoids circular import
-    from dwave.graphs.generators.zephyr.coords import _zephyr_coordinates_cache
+    from dwave.graphs.topologies.zephyr.coords import _zephyr_coordinates_cache
 
     m_t = target.graph['rows']
     t = target.graph['tile']

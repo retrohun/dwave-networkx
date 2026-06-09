@@ -20,7 +20,7 @@ import networkx as nx
 import numpy as np
 
 from dwave.graphs.drawing.qubit_layout import draw_qubit_graph, draw_embedding, draw_yield
-from dwave.graphs.generators.zephyr import zephyr_graph, zephyr_coordinates
+from dwave.graphs.topologies.zephyr import zephyr_graph, zephyr_coordinates
 
 
 __all__ = ['zephyr_layout',

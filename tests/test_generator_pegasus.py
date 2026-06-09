@@ -21,7 +21,7 @@ import networkx as nx
 import dwave.graphs as dnx
 import numpy as np
 
-from dwave.graphs.generators.pegasus import (
+from dwave.graphs.topologies.pegasus import (
     fragmented_edges,
     get_tuple_defragmentation_fn,
     get_tuple_fragmentation_fn,
