@@ -61,7 +61,7 @@ def vertex_color(graph: GraphLike,
             Additional keyword parameters are passed to the sampler.
 
     Returns:
-        A coloring for each vertex in graph such that no adjacent nodes share
+        A coloring for each vertex in ``graph`` such that no adjacent nodes share
         the same color. A dict of the form ``{node: color, ...}``.
 
     Note:
@@ -191,7 +191,7 @@ def is_vertex_coloring(G: nx.Graph, coloring: dict[Hashable, Hashable]) -> bool:
             The graph on which the vertex coloring is applied.
 
         coloring:
-            A coloring of the nodes of G. Should be a dict of the form
+            A coloring of the nodes of ``G``. Should be a dict of the form
             ``{node: color, ...}``.
 
     Returns:

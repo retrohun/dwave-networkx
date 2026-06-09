@@ -108,7 +108,7 @@ def min_maximal_matching(graph: GraphLike,
 
     Example:
         This example uses a sampler from
-        `dimod <https://github.com/dwavesystems/dimod>`_ to find a minimum maximal
+        :ref:`index_dimod` to find a minimum maximal
         matching for a Chimera unit cell.
 
         >>> import dimod
