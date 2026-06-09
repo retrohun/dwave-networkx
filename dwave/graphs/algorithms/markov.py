@@ -54,7 +54,7 @@ __all__ = ['sample_markov_network']
 #
 
 
-def sample_markov_network(MN: nx.Graph,
+def sample_markov_network(graph: nx.Graph,
                           sampler: dimod.Sampler,
                           fixed_variables: Mapping[Variable, Bias] | None = None,
                           return_sampleset: bool = False,
@@ -63,7 +63,7 @@ def sample_markov_network(MN: nx.Graph,
     """Samples from a Markov network using the provided sampler.
 
     Args:
-        MN:
+        graph:
             A Markov network as returned by
             :func:`~dwave.graphs.generators.markov.markov_network`. Potentials
             data is stored in a node/edge attribute ``potential``.
@@ -133,7 +133,7 @@ def sample_markov_network(MN: nx.Graph,
 
     """
 
-    bqm = dimod.generators.markov_network(MN)
+    bqm = dimod.generators.markov_network(graph)
 
     if fixed_variables:
         # we can modify in-place since we just made it

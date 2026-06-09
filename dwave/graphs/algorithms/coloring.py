@@ -141,7 +141,7 @@ def min_vertex_color(graph: nx.Graph,
 min_vertex_coloring = min_vertex_color
 
 
-def is_cycle(G: nx.Graph) -> bool:
+def is_cycle(graph: nx.Graph) -> bool:
     """Determines whether the given graph is a cycle or circle graph.
 
     A cycle graph or circular graph is a graph that consists of a single cycle.
@@ -149,23 +149,23 @@ def is_cycle(G: nx.Graph) -> bool:
     https://en.wikipedia.org/wiki/Cycle_graph
 
     Args:
-        G: The graph to examine.
+        graph: The graph to examine.
 
     Returns:
         True if the graph consists of a single cycle.
 
     """
-    if len(G) <= 2:
+    if len(graph) <= 2:
         return False
 
-    trailing, leading = next(iter(G.edges))
+    trailing, leading = next(iter(graph.edges))
     start_node = trailing
 
     # travel around the graph, checking that each node has degree exactly two
     # also track how many nodes were visited
     n_visited = 1
     while leading != start_node:
-        neighbors = G[leading]
+        neighbors = graph[leading]
 
         if len(neighbors) != 2:
             return False
@@ -180,18 +180,18 @@ def is_cycle(G: nx.Graph) -> bool:
         n_visited += 1
 
     # if we haven't visited all of the nodes, then it is not a connected cycle
-    return n_visited == len(G)
+    return n_visited == len(graph)
 
 
-def is_vertex_coloring(G: nx.Graph, coloring: dict[Hashable, Hashable]) -> bool:
+def is_vertex_coloring(graph: nx.Graph, coloring: dict[Hashable, Hashable]) -> bool:
     """Determines whether the given coloring is a vertex coloring of graph G.
 
     Args:
-        G:
+        graph:
             The graph on which the vertex coloring is applied.
 
         coloring:
-            A coloring of the nodes of ``G``. Should be a dict of the form
+            A coloring of the nodes of ``graph``. Should be a dict of the form
             ``{node: color, ...}``.
 
     Returns:
@@ -199,18 +199,19 @@ def is_vertex_coloring(G: nx.Graph, coloring: dict[Hashable, Hashable]) -> bool:
         two adjacent vertices share a color.
 
     Example:
-        This example colors checks two colorings for a graph, G, of a single
-        Chimera unit cell. The first uses one color (0) for the four horizontal
-        qubits and another (1) for the four vertical qubits, in which case there
-        are no adjacencies; the second coloring swaps the color of one node.
+        This example colors checks two colorings for a graph, ``graph``, of a
+        single Chimera unit cell. The first uses one color (0) for the four
+        horizontal qubits and another (1) for the four vertical qubits, in which
+        case there are no adjacencies; the second coloring swaps the color of
+        one node.
 
-        >>> G = dwave.graphs.chimera_graph(1,1,4)
+        >>> graph = dwave.graphs.chimera_graph(1,1,4)
         >>> colors = {0: 0, 1: 0, 2: 0, 3: 0, 4: 1, 5: 1, 6: 1, 7: 1}
-        >>> dwave.graphs.is_vertex_coloring(G, colors)
+        >>> dwave.graphs.is_vertex_coloring(graph, colors)
         True
         >>> colors[4]=0
-        >>> dwave.graphs.is_vertex_coloring(G, colors)
+        >>> dwave.graphs.is_vertex_coloring(graph, colors)
         False
 
     """
-    return all(coloring[u] != coloring[v] for u, v in G.edges)
+    return all(coloring[u] != coloring[v] for u, v in graph.edges)
