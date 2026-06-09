@@ -71,10 +71,6 @@ def partition(graph: GraphLike,
         >>> G = dwave.graphs.chimera_graph(1, 1, 4)
         >>> partitions = dwave.graphs.partition(G, sampler=sampler)
 
-    Note:
-        Samplers by their nature may not return the optimal solution. This
-        function does not attempt to confirm the quality of the returned sample.
-
     """
     if not len(graph.nodes):
         return {}

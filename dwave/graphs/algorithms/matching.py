@@ -40,6 +40,8 @@ def maximal_matching(graph: GraphLike,
     Finding maximal matchings can be done is polynomial time, so this method
     is only useful pedagogically.
 
+    Based on the formulation presented in [Luc2014]_.
+
     Args:
         graph:
             The graph on which to find a maximal matching. Either an integer
@@ -55,13 +57,8 @@ def maximal_matching(graph: GraphLike,
     Returns:
         A maximal matching of the graph.
 
-    Note:
-        Samplers by their nature may not return the optimal solution. This
-        function does not attempt to confirm the quality of the returned sample.
-
     .. _matching: https://en.wikipedia.org/wiki/Matching_(graph_theory)
 
-    Based on the formulation presented in [Luc2014]_.
     """
     nodes, edges = graph
 
@@ -116,15 +113,8 @@ def min_maximal_matching(graph: GraphLike,
         >>> G = dwave.graphs.chimera_graph(1, 1, 4)
         >>> matching = dwave.graphs.min_maximal_matching(G, sampler)
 
-    Note:
-        Samplers by their nature may not return the optimal solution. This
-        function does not attempt to confirm the quality of the returned sample.
-
     .. _matching: https://en.wikipedia.org/wiki/Matching_(graph_theory)
 
-    References:
-        Lucas, A. (2014). Ising formulations of many NP problems.
-        Frontiers in Physics, Volume 2, Article 5.
     """
     nodes, edges = graph
 

@@ -81,10 +81,6 @@ def structural_imbalance(graph: nx.Graph,
         >>> print(colors)  # doctest: +SKIP
         {'Bob': 1, 'Ted': 1, 'Alice': 1, 'Eve': 0}
 
-    Note:
-        Samplers by their nature may not return the optimal solution. This
-        function does not attempt to confirm the quality of the returned sample.
-
     References:
         `Ising model on Wikipedia <https://en.wikipedia.org/wiki/Ising_model>`_
 

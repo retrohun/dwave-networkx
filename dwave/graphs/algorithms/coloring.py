@@ -64,10 +64,6 @@ def vertex_color(graph: GraphLike,
         A coloring for each vertex in ``graph`` such that no adjacent nodes share
         the same color. A dict of the form ``{node: color, ...}``.
 
-    Note:
-        Samplers by their nature may not return the optimal solution. This
-        function does not attempt to confirm the quality of the returned sample.
-
     """
     if not isinstance(colors, Sequence):
         # assume colors is Integral
@@ -122,10 +118,6 @@ def min_vertex_color(graph: nx.Graph,
     Returns:
         A coloring for each vertex in ``graph`` such that no adjacent nodes
         share the same color. A dict of the form ``{node: color, ...}``.
-
-    Note:
-        Samplers by their nature may not return the optimal solution. This
-        function does not attempt to confirm the quality of the returned sample.
 
     """
     bqm = dimod.generators.min_vertex_coloring(

@@ -9,6 +9,13 @@ binary quadratic model samplers.
 
 .. currentmodule:: dwave.graphs
 
+
+.. note::
+    Some of the algorithms below are implemented by sampling from a binary
+    quadratic model. Note that samplers by their nature may not return the
+    optimal solution. The functions that use a sampler do not attempt to confirm
+    the quality of the returned solution.
+
 .. _graphs_canonicalization:
 
 Canonicalization

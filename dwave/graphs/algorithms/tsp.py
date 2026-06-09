@@ -75,10 +75,6 @@ def traveling_salesperson(graph: nx.Graph,
         >>> dwave.graphs.traveling_salesperson(G, dimod.ExactSolver(), start=0) # doctest: +SKIP
         [0, 1, 2, 3]
 
-    Note:
-        Samplers by their nature may not return the optimal solution. This
-        function does not attempt to confirm the quality of the returned sample.
-
     """
     # Get a QUBO representation of the problem
     bqm = dimod.generators.traveling_salesperson(graph, lagrange=lagrange, weight=weight)

@@ -127,12 +127,7 @@ def sample_markov_network(graph: nx.Graph,
     >>> samples[0]           # doctest: +SKIP
     {'a': 0, 'c': 0, 'b': 0}
 
-    Note:
-        Samplers by their nature may not return the optimal solution. This
-        function does not attempt to confirm the quality of the returned sample.
-
     """
-
     bqm = dimod.generators.markov_network(graph)
 
     if fixed_variables:
