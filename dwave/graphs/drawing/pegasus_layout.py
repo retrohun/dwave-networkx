@@ -19,7 +19,7 @@ import networkx as nx
 import numpy as np
 
 from dwave.graphs.drawing.qubit_layout import draw_qubit_graph, draw_embedding, draw_yield
-from dwave.graphs.generators.pegasus import pegasus_graph, pegasus_coordinates
+from dwave.graphs.topologies.pegasus import pegasus_graph, pegasus_coordinates
 from dwave.graphs.drawing.chimera_layout import chimera_node_placer_2d
 
 

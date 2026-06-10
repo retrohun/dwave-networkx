@@ -1,15 +1,18 @@
-.. _graphs_generators:
+.. _graphs_topologies:
 
-================
-Graph Generators
-================
+==========
+Topologies
+==========
 
-Generators for graphs, such the graphs (topologies) of D-Wave System QPUs.
+Utilities for Zephyr, Pegasus, and Chimera topologies, including utilities
+for generating graphs, coordinate conversions, and more.
 
 .. currentmodule:: dwave.graphs
 
-D-Wave Systems
-==============
+Graph Generators
+================
+
+Generators for the graphs (topologies) of D-Wave System QPUs.
 
 .. autosummary::
    :toctree: generated/

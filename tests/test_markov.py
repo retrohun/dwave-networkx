@@ -28,7 +28,7 @@ class Test_sample_markov_network(unittest.TestCase):
                              (0, 1): -1, (1, 1): -4},
                       'd': {(0,): -.5, (1,): 1.6}}
 
-        MN = dwave.graphs.generators.markov_network(potentials)
+        MN = dwave.graphs.topologies.markov_network(potentials)
 
         samples = dwave.graphs.algorithms.sample_markov_network(
             MN, dimod.ExactSolver(), fixed_variables={'c': 0},
@@ -52,7 +52,7 @@ class Test_sample_markov_network(unittest.TestCase):
                              (0, 1): -1, (1, 1): -4},
                       'd': {(0,): -.5, (1,): 1.6}}
 
-        MN = dwave.graphs.generators.markov_network(potentials)
+        MN = dwave.graphs.topologies.markov_network(potentials)
 
         bqm = dimod.generators.markov_network(MN)
 

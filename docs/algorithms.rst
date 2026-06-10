@@ -80,8 +80,11 @@ The map-coloring problem is to assign a color to each region of a map
     :toctree: generated/
 
     is_vertex_coloring
-    min_vertex_color
-    vertex_color
+    min_vertex_coloring
+    vertex_coloring
+    zephyr_four_color
+    pegasus_four_color
+    chimera_two_color
 
 .. _graphs_cover:
 

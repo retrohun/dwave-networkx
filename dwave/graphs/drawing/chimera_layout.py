@@ -19,7 +19,7 @@ Tools to visualize :term:`Chimera` lattices and weighted :term:`graph` problems 
 import networkx as nx
 
 from dwave.graphs.drawing.qubit_layout import draw_qubit_graph, draw_embedding, draw_yield
-from dwave.graphs.generators.chimera import chimera_graph, find_chimera_indices, chimera_coordinates
+from dwave.graphs.topologies.chimera import chimera_graph, find_chimera_indices, chimera_coordinates
 
 
 __all__ = ['chimera_layout', 'draw_chimera', 'draw_chimera_embedding', 'draw_chimera_yield']

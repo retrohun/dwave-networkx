@@ -1,4 +1,4 @@
-# Copyright 2018 D-Wave Systems Inc.
+# Copyright 2026 D-Wave
 #
 #    Licensed under the Apache License, Version 2.0 (the "License");
 #    you may not use this file except in compliance with the License.
@@ -12,15 +12,5 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 
-import dwave.graphs.topologies
-from dwave.graphs.topologies import *
-
-import dwave.graphs.algorithms
-from dwave.graphs.algorithms import *
-
-from dwave.graphs.exceptions import *
-
-import dwave.graphs.drawing
-from dwave.graphs.drawing import *
-
-__version__ = "1.0.0.dev"
+from dwave.graphs.topologies.zephyr.coords import *
+from dwave.graphs.topologies.zephyr.graphs import *

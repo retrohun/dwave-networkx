@@ -13,6 +13,7 @@
 #    limitations under the License.
 
 from collections.abc import Sequence, Hashable
+from typing import Literal
 
 import dimod
 import networkx as nx
@@ -24,6 +25,9 @@ __all__ = ["is_cycle",
            "is_vertex_coloring",
            "min_vertex_coloring",
            "vertex_coloring",
+           "zephyr_four_color",
+           "pegasus_four_color",
+           "chimera_two_color",
            ]
 
 
@@ -195,5 +199,78 @@ def is_vertex_coloring(graph: nx.Graph, coloring: dict[Hashable, Hashable]) -> b
         >>> dwave.graphs.is_vertex_coloring(graph, colors)
         False
 
-    """
+   """
     return all(coloring[u] != coloring[v] for u, v in graph.edges)
+
+
+def zephyr_four_color(q: tuple[int, int, int, int, int], scheme: Literal[0, 1] = 0) -> int:
+    """Returns a node color sufficient for four coloring a Zephyr graph.
+
+    Args:
+        q:
+            Qubit label in standard coordinate format: ``(u, w, k, j, z)``.
+
+        scheme:
+            Pattern selector. Two patterns not related by automorphism are
+            supported.
+
+    Returns:
+        A color in ``{0, 1, 2, 3}``.
+
+    Example:
+        A mapping of every qubit in a Zephyr[m, t] graph to one of four colors.
+
+        >>> m = 2
+        >>> G = dwave.graphs.zephyr_graph(m, coordinates=True)
+        >>> colors = {q: dwave.graphs.zephyr_four_color(q) for q in G.nodes()}
+    """
+    u, w, _, j, z = q
+    
+    if scheme == 0:
+        return j + ((w + 2*(z+u) + j)&2)
+    elif scheme == 1:
+        return (2*u + w + 2*z + j) & 3
+    else:
+        raise ValueError('Unknown scheme')
+
+
+def pegasus_four_color(q: tuple[int, int, int, int]) -> int:
+    """Returns a node color sufficient for four coloring a Pegasus graph.
+
+    Args:
+        q:
+            Qubit label in standard coordinate format: ``(u, w, k, z)``.
+
+    Returns:
+        A color in ``{0, 1, 2, 3}``.
+
+    Example:
+        A mapping of every qubit in a Pegasus[m] graph to one of four colors.
+
+        >>> m = 2
+        >>> G = dwave.graphs.pegasus_graph(m, coordinates=True)
+        >>> colors = {q: dwave.graphs.pegasus_four_color(q) for q in G.nodes()}
+    """
+    u, w, k, z = q
+    return 2 * u + ((k ^ z) & 1)
+
+
+def chimera_two_color(q: tuple[int, int, int, int]) -> int:
+    """Returns a node color sufficient for two coloring a Chimera graph.
+
+    Args:
+        q:
+            Qubit label in standard coordinate format: ``(i, j, u, k)``.
+
+    Returns:
+        A color in ``{0, 1}``.
+
+    Example:
+        A mapping of every qubit in a Chimera graph to one of two colors.
+
+        >>> m = 2
+        >>> G = dwave.graphs.chimera_graph(m, coordinates=True)
+        >>> colors = {q: dwave.graphs.chimera_two_color(q) for q in G.nodes()}
+    """
+    i, j, u, _ = q
+    return (i ^ j ^ u) & 1

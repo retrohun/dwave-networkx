@@ -62,7 +62,7 @@ def partition(graph: GraphLike,
         This example uses a dimod reference sampler
         :class:`~dimod.reference.samplers.ExactCQMSolver` to find a 2-partition
         for a graph of a Chimera unit cell created using the
-        :meth:`~dwave.graphs.generators.chimera.chimera_graph` function.
+        :meth:`~dwave.graphs.topologies.chimera.chimera_graph` function.
 
         >>> import dimod
         >>> import dwave.graphs
