@@ -12,7 +12,7 @@
 #    limitations under the License.
 
 """Generators for some graphs derived from the D-Wave System."""
-from collections.abc import Callable, Generator, Iterable, Iterator
+from collections.abc import Callable, Generator, Iterable
 from itertools import product
 
 import networkx as nx

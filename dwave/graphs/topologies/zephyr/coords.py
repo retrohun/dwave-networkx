@@ -19,7 +19,7 @@
 __all__ = ["zephyr_coordinates"]
 
 
-from collections.abc import Callable, Generator, Iterable, Iterator, Sequence
+from collections.abc import Callable, Generator, Iterable, Sequence
 
 import networkx as nx
 
