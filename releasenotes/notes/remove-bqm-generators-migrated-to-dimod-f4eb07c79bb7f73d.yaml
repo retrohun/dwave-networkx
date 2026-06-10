@@ -29,3 +29,6 @@ upgrade:
       favor of ``dimod.generators.tsp.traveling_salesperson``.
   - |
     Drop support for ``dimod<0.12.22``.
+  - |
+    Drop ``vertex_color`` and ``min_vertex_color`` aliases in favor of
+    ``vertex_coloring`` and ``min_vertex_coloring`` for consistency.

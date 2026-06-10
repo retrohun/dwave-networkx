@@ -22,19 +22,17 @@ from dimod.typing import GraphLike
 
 __all__ = ["is_cycle",
            "is_vertex_coloring",
-           "min_vertex_color",
-           "min_vertex_coloring",   # alias for min_vertex_color
-           "vertex_color",
-           "vertex_coloring",       # alias for vertex_color
+           "min_vertex_coloring",
+           "vertex_coloring",
            ]
 
 
 @graph_argument('graph')
-def vertex_color(graph: GraphLike,
-                 colors: int | Sequence[Hashable],
-                 sampler: dimod.Sampler,
-                 **sampler_args,
-                 ) -> dict[Hashable, Hashable]:
+def vertex_coloring(graph: GraphLike,
+                    colors: int | Sequence[Hashable],
+                    sampler: dimod.Sampler,
+                    **sampler_args,
+                    ) -> dict[Hashable, Hashable]:
     """Returns an approximate vertex coloring.
 
     Vertex coloring is the problem of assigning a color to the vertices of a
@@ -77,16 +75,12 @@ def vertex_color(graph: GraphLike,
     return {v: c for (v, c), val in sample.items() if val}
 
 
-# alias
-vertex_coloring = vertex_color 
-
-
-def min_vertex_color(graph: nx.Graph,
-                     sampler: dimod.Sampler,
-                     chromatic_lb: int | None = None,
-                     chromatic_ub: int | None = None,
-                     **sampler_args
-                     ) -> dict[Hashable, Hashable]:
+def min_vertex_coloring(graph: nx.Graph,
+                        sampler: dimod.Sampler,
+                        chromatic_lb: int | None = None,
+                        chromatic_ub: int | None = None,
+                        **sampler_args
+                        ) -> dict[Hashable, Hashable]:
     """Returns an approximate minimum vertex coloring.
 
     Vertex coloring is the problem of assigning a color to the
@@ -127,10 +121,6 @@ def min_vertex_color(graph: nx.Graph,
     sample = sampler.sample(bqm, **sampler_args).first.sample
 
     return {v: c for (v, c), val in sample.items() if val}
-
-
-# alias
-min_vertex_coloring = min_vertex_color
 
 
 def is_cycle(graph: nx.Graph) -> bool:
