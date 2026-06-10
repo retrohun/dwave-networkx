@@ -9,6 +9,13 @@ binary quadratic model samplers.
 
 .. currentmodule:: dwave.graphs
 
+
+.. note::
+    Some of the algorithms below are implemented by sampling from a binary
+    quadratic model. Note that samplers by their nature may not return the
+    optimal solution. The functions that use a sampler do not attempt to confirm
+    the quality of the returned solution.
+
 .. _graphs_canonicalization:
 
 Canonicalization
@@ -74,9 +81,7 @@ The map-coloring problem is to assign a color to each region of a map
 
     is_vertex_coloring
     min_vertex_color
-    min_vertex_color_qubo
     vertex_color
-    vertex_color_qubo
 
 .. _graphs_cover:
 
@@ -149,7 +154,6 @@ Markov Networks
     :toctree: generated/
 
     sample_markov_network
-    markov_network_bqm
 
 .. _graphs_matching:
 
@@ -172,9 +176,7 @@ A matching is a subset of graph edges in which no vertex occurs more than once.
 .. autosummary::
     :toctree: generated/
 
-    matching_bqm
-    maximal_matching_bqm
-    min_maximal_matching_bqm
+    maximal_matching
     min_maximal_matching
 
 .. _graphs_maximum_cut:
@@ -231,14 +233,6 @@ its member pairs.
     maximum_independent_set
     is_independent_set
 
-Helper Functions
-----------------
-
-.. autosummary::
-    :toctree: generated/
-
-    maximum_weighted_independent_set_qubo
-
 .. _graphs_partitioning:
 
 Partitioning
@@ -290,7 +284,6 @@ friendly/hostile interactions between vertices.
     :toctree: generated/
 
     structural_imbalance
-    structural_imbalance_ising
 
 .. _graphs_traveling_salesperson:
 
@@ -314,4 +307,4 @@ weighted graph.
     :toctree: generated/
 
     traveling_salesperson
-    traveling_salesperson_qubo
+    is_hamiltonian_path

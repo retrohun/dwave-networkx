@@ -12,12 +12,13 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 
-import unittest
 import itertools
+import unittest
 
 import networkx as nx
-import dwave.graphs as dnx
-from dimod import ExactSolver, SimulatedAnnealingSampler
+from dimod import ExactSolver
+
+import dwave.graphs
 
 
 class TestSocial(unittest.TestCase):
@@ -43,7 +44,7 @@ class TestSocial(unittest.TestCase):
             for p1 in redteam1:
                 S.add_edge(p0, p1, sign=-1)
 
-        frustrated_edges, colors = dnx.structural_imbalance(S, sampler)
+        frustrated_edges, colors = dwave.graphs.structural_imbalance(S, sampler)
         self.check_bicolor(colors)
 
         greenteam = ['Ted']
@@ -51,7 +52,7 @@ class TestSocial(unittest.TestCase):
             for p1 in greenteam:
                 S.add_edge(p0, p1, sign=1)
 
-        frustrated_edges, colors = dnx.structural_imbalance(S, sampler)
+        frustrated_edges, colors = dwave.graphs.structural_imbalance(S, sampler)
         self.check_bicolor(colors)
 
     def test_structural_imbalance_docstring_example(self):
@@ -61,13 +62,13 @@ class TestSocial(unittest.TestCase):
         S.add_edge('Alice', 'Bob', sign=1)  # Alice and Bob are friendly
         S.add_edge('Alice', 'Eve', sign=-1)  # Alice and Eve are hostile
         S.add_edge('Bob', 'Eve', sign=-1)  # Bob and Eve are hostile
-        frustrated_edges, colors = dnx.structural_imbalance(S, sampler)
+        frustrated_edges, colors = dwave.graphs.structural_imbalance(S, sampler)
         self.check_bicolor(colors)
         self.assertEqual(frustrated_edges, {})
         S.add_edge('Ted', 'Bob', sign=1)  # Ted is friendly with all
         S.add_edge('Ted', 'Alice', sign=1)
         S.add_edge('Ted', 'Eve', sign=1)
-        frustrated_edges, colors = dnx.structural_imbalance(S, sampler)
+        frustrated_edges, colors = dwave.graphs.structural_imbalance(S, sampler)
         self.check_bicolor(colors)
         self.assertTrue(frustrated_edges == {('Ted', 'Eve'): {'sign': 1}} or
                         frustrated_edges == {('Eve', 'Ted'): {'sign': 1}})
@@ -80,7 +81,7 @@ class TestSocial(unittest.TestCase):
         S.add_edge('Bob', 'Eve')  # invalid edge
 
         with self.assertRaises(ValueError):
-            frustrated_edges, colors = dnx.structural_imbalance(S, ExactSolver())
+            frustrated_edges, colors = dwave.graphs.structural_imbalance(S, ExactSolver())
 
     def test_sign_zero(self):
         """though not documentented, agents with no relation can have sign 0.
@@ -92,7 +93,7 @@ class TestSocial(unittest.TestCase):
         S.add_edge('Alice', 'Eve', sign=-1)  # Alice and Eve are hostile
         S.add_edge('Bob', 'Eve', sign=0)  # Bob and Eve have no relation
 
-        frustrated_edges, colors = dnx.structural_imbalance(S, sampler)
+        frustrated_edges, colors = dwave.graphs.structural_imbalance(S, sampler)
 
         self.assertEqual(frustrated_edges, {})  # should be no frustration
 
@@ -106,5 +107,5 @@ class TestSocial(unittest.TestCase):
         nx.set_edge_attributes(S, -1, 'sign')
 
         # smoke test
-        frustrated_edges, colors = dnx.structural_imbalance(S, sampler)
+        frustrated_edges, colors = dwave.graphs.structural_imbalance(S, sampler)
         self.check_bicolor(colors)

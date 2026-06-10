@@ -12,9 +12,14 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 
-import dimod
+from collections.abc import Mapping, Sequence
 
-__all__ = ['sample_markov_network', 'markov_network_bqm']
+import networkx as nx
+
+import dimod
+from dimod.typing import Variable, Bias
+
+__all__ = ['sample_markov_network']
 
 
 ###############################################################################
@@ -49,35 +54,38 @@ __all__ = ['sample_markov_network', 'markov_network_bqm']
 #
 
 
-def sample_markov_network(MN, sampler, fixed_variables=None,
-                          return_sampleset=False,
-                          **sampler_args):
-    """Samples from a markov network using the provided sampler.
+def sample_markov_network(graph: nx.Graph,
+                          sampler: dimod.Sampler,
+                          fixed_variables: Mapping[Variable, Bias] | None = None,
+                          return_sampleset: bool = False,
+                          **sampler_args,
+                          ) -> Sequence[Mapping[Variable, Bias]] | dimod.SampleSet:
+    """Samples from a Markov network using the provided sampler.
 
-    Parameters
-    ----------
-    G : NetworkX graph
-        A Markov Network as returned by :func:`.markov_network`
+    Args:
+        graph:
+            A Markov network as returned by
+            :func:`~dwave.graphs.generators.markov.markov_network`. Potentials
+            data is stored in a node/edge attribute ``potential``.
 
-    sampler : :class:`dimod.Sampler`
-        A dimod sampler.
+        sampler:
+            A dimod sampler.
 
-    fixed_variables : dict
-        A dictionary of variable assignments to be fixed in the markov network.
+        fixed_variables:
+            A dictionary of variable assignments to be fixed in the Markov
+            network.
 
-    return_sampleset : bool (optional, default=False)
-        If True, returns a :obj:`dimod.SampleSet` rather than a list of samples.
+        return_sampleset:
+            If True, returns a :class:`~dimod.SampleSet` rather than a list of
+            samples.
 
-    **sampler_args
-        Additional keyword parameters are passed to the sampler.
+        **sampler_args:
+            Additional keyword parameters are passed to the sampler.
 
-    Returns
-    -------
-    samples : list[dict]/:obj:`dimod.SampleSet`
+    Returns:
         A list of samples ordered from low-to-high energy or a sample set.
 
-    Examples
-    --------
+    Examples:
 
     >>> import dimod
     ...
@@ -119,15 +127,8 @@ def sample_markov_network(MN, sampler, fixed_variables=None,
     >>> samples[0]           # doctest: +SKIP
     {'a': 0, 'c': 0, 'b': 0}
 
-    Notes
-    -----
-    Samplers by their nature may not return the optimal solution. This
-    function does not attempt to confirm the quality of the returned
-    sample.
-
     """
-
-    bqm = markov_network_bqm(MN)
+    bqm = dimod.generators.markov_network(graph)
 
     if fixed_variables:
         # we can modify in-place since we just made it
@@ -143,60 +144,3 @@ def sample_markov_network(MN, sampler, fixed_variables=None,
         return sampleset
     else:
         return list(map(dict, sampleset.samples()))
-
-
-def markov_network_bqm(MN):
-    """Construct a binary quadratic model for a markov network.
-
-    Parameters
-    ----------
-    G : NetworkX graph
-        A Markov Network as returned by :func:`.markov_network`
-
-    Returns
-    -------
-    bqm : :class:`dimod.BinaryQuadraticModel`
-        A binary quadratic model.
-
-    """
-
-    bqm = dimod.BinaryQuadraticModel.empty(dimod.BINARY)
-
-    # the variable potentials
-    for v, ddict in MN.nodes(data=True, default=None):
-        potential = ddict.get('potential', None)
-
-        if potential is None:
-            continue
-
-        # for single nodes we don't need to worry about order
-
-        phi0 = potential[(0,)]
-        phi1 = potential[(1,)]
-
-        bqm.add_variable(v, phi1 - phi0)
-        bqm.offset += phi0
-
-    # the interaction potentials
-    for u, v, ddict in MN.edges(data=True, default=None):
-        potential = ddict.get('potential', None)
-
-        if potential is None:
-            continue
-
-        # in python<=3.5 the edge order might not be consistent so we use the
-        # one that was stored
-        order = ddict['order']
-        u, v = order
-
-        phi00 = potential[(0, 0)]
-        phi01 = potential[(0, 1)]
-        phi10 = potential[(1, 0)]
-        phi11 = potential[(1, 1)]
-
-        bqm.add_variable(u, phi10 - phi00)
-        bqm.add_variable(v, phi01 - phi00)
-        bqm.add_interaction(u, v, phi11 - phi10 - phi01 + phi00)
-        bqm.offset += phi00
-
-    return bqm

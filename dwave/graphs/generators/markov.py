@@ -13,12 +13,12 @@
 #    limitations under the License.
 
 import itertools
-import collections.abc as abc
+from collections.abc import Hashable, Mapping
 
 import networkx as nx
 
 
-__all__ = 'markov_network',
+__all__ = ['markov_network']
 
 
 ###############################################################################
@@ -53,26 +53,23 @@ __all__ = 'markov_network',
 #
 
 
-def markov_network(potentials):
-    """Creates a Markov Network from potentials.
+def markov_network(potentials: Mapping[Hashable, Mapping[Hashable, float]],
+                   ) -> nx.Graph:
+    """Creates a Markov network from potentials.
 
-    A Markov Network is also knows as a `Markov Random Field`_
+    A Markov network is also knows as a `Markov Random Field`_
 
-    Parameters
-    ----------
-    potentials : dict[tuple, dict]
-        A dict where the keys are either nodes or edges and the values are a
-        dictionary of potentials. The potential dict should map each possible
-        assignment of the nodes/edges to their energy.
+    Args:
+        potentials:
+            A mapping where the keys are either nodes or edges and the values
+            are a mapping of potentials. The potential dict should map each
+            possible assignment of the nodes/edges to their energy.
 
-    Returns
-    -------
-    MN : :obj:`networkx.Graph`
-        A markov network as a graph where each node/edge stores its potential
-        dict as above.
+    Returns:
+        A markov network as a NetworkX graph where each node/edge stores its
+        potential dict as above.
 
-    Examples
-    --------
+    Example:
     >>> potentials = {('a', 'b'): {(0, 0): -1,
     ...                            (0, 1): .5,
     ...                            (1, 0): .5,
@@ -97,8 +94,8 @@ def markov_network(potentials):
 
         # because this data potentially wont be used for a while, let's do some
         # input checking now and save some debugging issues later
-        if not isinstance(phis, abc.Mapping):
-            raise TypeError("phis should be a dict")
+        if not isinstance(phis, Mapping):
+            raise TypeError("node/edge potentials should be a dict")
         elif not all(config in phis for config in itertools.product((0, 1), repeat=num_vars)):
             raise ValueError("not all potentials provided for {!r}".format(clique))
 

@@ -18,7 +18,7 @@ import dimod
 import networkx as nx
 import parameterized
 
-import dwave.graphs as dnx
+import dwave.graphs
 
 
 @parameterized.parameterized_class(
@@ -35,67 +35,12 @@ import dwave.graphs as dnx
      ]
     )
 class TestMatching(unittest.TestCase):
-    def test_matching_bqm(self):
-        bqm = dnx.matching_bqm(self.graph)
-
-        # the ground states should be exactly the matchings of G
-        sampleset = dimod.ExactSolver().sample(bqm)
-
-        for sample, energy in sampleset.data(['sample', 'energy']):
-            edges = [v for v, val in sample.items() if val > 0]
-            self.assertEqual(nx.is_matching(self.graph, edges), energy == 0)
-            self.assertTrue(energy == 0 or energy >= 1)
-
     def test_maximal_matching(self):
-        matching = dnx.algorithms.matching.maximal_matching(
+        matching = dwave.graphs.algorithms.maximal_matching(
             self.graph, dimod.ExactSolver())
         self.assertTrue(nx.is_maximal_matching(self.graph, matching))
 
-    def test_maximal_matching_bqm(self):
-        bqm = dnx.maximal_matching_bqm(self.graph)
-
-        # the ground states should be exactly the maximal matchings of G
-        sampleset = dimod.ExactSolver().sample(bqm)
-
-        for sample, energy in sampleset.data(['sample', 'energy']):
-            edges = set(v for v, val in sample.items() if val > 0)
-            self.assertEqual(nx.is_maximal_matching(self.graph, edges),
-                             energy == 0)
-            self.assertGreaterEqual(energy, 0)
-
     def test_min_maximal_matching(self):
-        matching = dnx.min_maximal_matching(self.graph, dimod.ExactSolver())
+        matching = dwave.graphs.algorithms.min_maximal_matching(
+            self.graph, dimod.ExactSolver())
         self.assertTrue(nx.is_maximal_matching(self.graph, matching))
-
-    def test_min_maximal_matching_bqm(self):
-        bqm = dnx.min_maximal_matching_bqm(self.graph)
-
-        if len(self.graph) == 0:
-            self.assertEqual(len(bqm.linear), 0)
-            return
-
-        # the ground states should be exactly the minimum maximal matchings of
-        # G
-        sampleset = dimod.ExactSolver().sample(bqm)
-
-        # we'd like to use sampleset.lowest() but it didn't exist in dimod
-        # 0.8.0
-        ground_energy = sampleset.first.energy
-        cardinalities = set()
-        for sample, energy in sampleset.data(['sample', 'energy']):
-            if energy > ground_energy:
-                continue
-            edges = set(v for v, val in sample.items() if val > 0)
-            self.assertTrue(nx.is_maximal_matching(self.graph, edges))
-            cardinalities.add(len(edges))
-
-        # all ground have the same cardinality (or it's empty)
-        self.assertEqual(len(cardinalities), 1)
-        cardinality, = cardinalities
-
-        # everything that's not ground has a higher energy
-        for sample, energy in sampleset.data(['sample', 'energy']):
-            edges = set(v for v, val in sample.items() if val > 0)
-            if energy != sampleset.first.energy:
-                if nx.is_maximal_matching(self.graph, edges):
-                    self.assertGreater(len(edges), cardinality)

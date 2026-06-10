@@ -47,59 +47,6 @@ class TestIsIndependentSet(unittest.TestCase):
         self.assertFalse(dnx.is_independent_set(G, [0, 1]))
 
 
-class TestWeightedMaximumIndependentSet(unittest.TestCase):
-    def test_empty(self):
-        G = nx.Graph()
-
-        Q = dnx.maximum_weighted_independent_set_qubo(G)
-
-        self.assertEqual(Q, {})
-
-    def test_K1_no_weights(self):
-        G = nx.complete_graph(1)
-
-        Q = dnx.maximum_weighted_independent_set_qubo(G)
-
-        self.assertEqual(Q, {(0, 0): -1})
-
-    def test_K1_weighted(self):
-        G = nx.Graph()
-        G.add_node(0, weight=.5)
-
-        Q = dnx.maximum_weighted_independent_set_qubo(G)
-
-        self.assertEqual(Q, {(0, 0): -1.})  # should be scaled to 1
-
-    def test_K2_weighted(self):
-        G = nx.Graph()
-        G.add_node(0, weight=.5)
-        G.add_node(1, weight=1)
-        G.add_edge(0, 1)
-
-        Q = dnx.maximum_weighted_independent_set_qubo(G, weight='weight')
-
-        self.assertEqual(Q, {(0, 0): -.5, (1, 1): -1, (0, 1): 2.0})
-
-    def test_K2_partially_weighted(self):
-        G = nx.Graph()
-        G.add_node(0, weight=.5)
-        G.add_node(1)
-        G.add_edge(0, 1)
-
-        Q = dnx.maximum_weighted_independent_set_qubo(G, weight='weight')
-
-        self.assertEqual(Q, {(0, 0): -.5, (1, 1): -1, (0, 1): 2.0})
-
-    def test_path3_weighted(self):
-        G = nx.path_graph(3)
-        G.nodes[1]['weight'] = 2.1
-
-        Q = dnx.maximum_weighted_independent_set_qubo(G, weight='weight')
-
-        self.assertLess(dimod.qubo_energy({0: 0, 1: 1, 2: 0}, Q),
-                        dimod.qubo_energy({0: 1, 1: 0, 2: 1}, Q))
-
-
 class TestIndepSet(unittest.TestCase):
 
     def test_maximum_independent_set_basic(self):
