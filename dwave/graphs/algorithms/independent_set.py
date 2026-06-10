@@ -12,8 +12,10 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 
+from dimod.generators.graph import (
+    maximum_weight_independent_set as maximum_weight_independent_set_bqm)
+
 __all__ = ["maximum_weighted_independent_set",
-           "maximum_weighted_independent_set_qubo",
            "maximum_independent_set",
            "is_independent_set",
            ]
@@ -22,9 +24,10 @@ __all__ = ["maximum_weighted_independent_set",
 def maximum_weighted_independent_set(G, sampler, weight=None, lagrange=2.0, **sampler_args):
     """Returns an approximate maximum weighted independent set.
 
-    Defines a QUBO with ground states corresponding to a
-    maximum weighted independent set and uses the sampler to sample
-    from it.
+    Defines a binary quadratic model with ground states corresponding to a
+    maximum weighted independent set (see
+    :func:`dimod.generators.maximum_weight_independent_set`) and uses the
+    sampler to sample from it.
 
     An independent set is a set of nodes such that the subgraph
     of G induced by these nodes contains no edges. A maximum
@@ -73,11 +76,13 @@ def maximum_weighted_independent_set(G, sampler, weight=None, lagrange=2.0, **sa
     Frontiers in Physics, Volume 2, Article 5.
 
     """
-    # Get a QUBO representation of the problem
-    Q = maximum_weighted_independent_set_qubo(G, weight, lagrange)
+    # Get a BQM representation of the problem
+    bqm = maximum_weight_independent_set_bqm(G.edges,
+                                             G.nodes(data=weight, default=1),
+                                             strength_multiplier=lagrange)
 
     # use the sampler to find low energy states
-    response = sampler.sample_qubo(Q, **sampler_args)
+    response = sampler.sample(bqm, **sampler_args)
 
     # we want the lowest energy sample
     sample = next(iter(response))
@@ -186,62 +191,3 @@ def is_independent_set(G, indep_nodes):
 
     """
     return len(G.subgraph(indep_nodes).edges) == 0
-
-
-def maximum_weighted_independent_set_qubo(G, weight=None, lagrange=2.0):
-    """Return the QUBO with ground states corresponding to a maximum weighted independent set.
-
-    Parameters
-    ----------
-    G : NetworkX graph
-
-    weight : string, optional (default None)
-        If None, every node has equal weight. If a string, use this node
-        attribute as the node weight. A node without this attribute is
-        assumed to have max weight.
-        
-    lagrange : optional (default 2)
-        Lagrange parameter to weight constraints (no edges within set) 
-        versus objective (largest set possible).
-
-    Returns
-    -------
-    QUBO : dict
-       The QUBO with ground states corresponding to a maximum weighted independent set.
-
-    Examples
-    --------
-
-    >>> from dwave.graphs.algorithms.independent_set import maximum_weighted_independent_set_qubo
-    ...
-    >>> G = nx.path_graph(3)
-    >>> Q = maximum_weighted_independent_set_qubo(G, weight='weight', lagrange=2.0)
-    >>> Q[(0, 0)]
-    -1.0
-    >>> Q[(1, 1)]
-    -1.0
-    >>> Q[(0, 1)]
-    2.0
-
-    """
-
-    # empty QUBO for an empty graph
-    if not G:
-        return {}
-
-    # We assume that the sampler can handle an unstructured QUBO problem, so let's set one up.
-    # Let us define the largest independent set to be S.
-    # For each node n in the graph, we assign a boolean variable v_n, where v_n = 1 when n
-    # is in S and v_n = 0 otherwise.
-    # We call the matrix defining our QUBO problem Q.
-    # On the diagnonal, we assign the linear bias for each node to be the negative of its weight.
-    # This means that each node is biased towards being in S. Weights are scaled to a maximum of 1.
-    # Negative weights are considered 0.
-    # On the off diagnonal, we assign the off-diagonal terms of Q to be 2. Thus, if both
-    # nodes are in S, the overall energy is increased by 2.
-    cost = dict(G.nodes(data=weight, default=1))
-    scale = max(cost.values())
-    Q = {(node, node): min(-cost[node] / scale, 0.0) for node in G}
-    Q.update({edge: lagrange for edge in G.edges})
-
-    return Q
