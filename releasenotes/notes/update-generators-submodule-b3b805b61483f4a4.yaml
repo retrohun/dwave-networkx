@@ -1,0 +1,9 @@
+---
+upgrade:
+  - |
+    ``dwave.graphs.generators`` is renamed ``dwave.graphs.topologies``
+  - |
+    Topology specific coloring functions, ``zephyr_four_color()``, ``pegasus_four_color()``, 
+    and ``chimera_two_color()``, are moved from ``dwave.graphs.generators`` to 
+    ``dwave.graphs.algorithms.coloring`` 
+
