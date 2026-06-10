@@ -14,8 +14,14 @@
 
 __all__ = ["_add_compatible_edges", "_add_compatible_nodes", "_add_compatible_terms"]
 
+from typing import TYPE_CHECKING
+from collections.abc import Iterable
 
-def _add_compatible_edges(G, edge_list):
+if TYPE_CHECKING:
+    import networkx as nx
+
+
+def _add_compatible_edges(G: nx.Graph, edge_list: Iterable | None) -> None:
     # Check edge_list defines a subgraph of G and create subgraph.
     # Slow when edge_list is large, but clear (non-defaulted behaviour, so fine):
     if edge_list is not None:
@@ -28,7 +34,7 @@ def _add_compatible_edges(G, edge_list):
             raise ValueError('edge_list contains duplicates.')
 
 
-def _add_compatible_nodes(G, node_list):
+def _add_compatible_nodes(G: nx.Graph, node_list: Iterable | None) -> None:
     if node_list is not None:
         if not all(G.has_node(n) for n in node_list):
             raise ValueError("node_list contains nodes incompatible with G")
@@ -39,7 +45,7 @@ def _add_compatible_nodes(G, node_list):
             raise ValueError('node_list contains duplicates.')
 
 
-def _add_compatible_terms(G, node_list, edge_list):
+def _add_compatible_terms(G: nx.Graph, node_list: Iterable | None, edge_list: Iterable | None) -> None:
     _add_compatible_edges(G, edge_list)
     _add_compatible_nodes(G, node_list)
     #Check node deletion hasn't caused edge deletion:

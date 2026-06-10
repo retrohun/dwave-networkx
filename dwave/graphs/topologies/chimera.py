@@ -12,10 +12,9 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 
-"""
-Generators for graphs derived from the D-Wave System.
+"""Generators for graphs derived from the D-Wave System."""
 
-"""
+from collections.abc import Callable, Generator, Hashable, Iterable
 from itertools import product
 
 import networkx as nx
@@ -34,59 +33,56 @@ __all__ = ['chimera_graph',
            ]
 
 
-def chimera_graph(m, n=None, t=None, create_using=None, node_list=None, edge_list=None,
-                  data=True, coordinates=False, check_node_list=False, check_edge_list=False):
+def chimera_graph(
+    m: int,
+    n: int | None = None,
+    t: int | None = None,
+    create_using: nx.Graph | None = None,
+    node_list: Iterable | None = None,
+    edge_list: Iterable[tuple] | None = None,
+    data: bool = True,
+    coordinates: bool = False,
+    check_node_list: bool = False,
+    check_edge_list: bool = False,
+) -> nx.Graph:
     """Creates a Chimera lattice of size (m, n, t).
 
-    Parameters
-    ----------
-    m : int
-        Number of rows in the Chimera lattice.
-    n : int (optional, default m)
-        Number of columns in the Chimera lattice.
-    t : int (optional, default 4)
-        Size of the shore within each Chimera tile.
-    create_using : Graph (optional, default None)
-        If provided, this graph is cleared of nodes and edges and filled
-        with the new graph. Usually used to set the type of the graph.
-    node_list : iterable (optional, default None)
-        Iterable of nodes in the graph. The nodes should typically be 
-        compatible with the requested lattice-shape parameters and coordinate 
-        system; incompatible nodes are accepted unless you set :code:`check_node_list=True`. 
-        If not specified, calculated from (``m``, ``n``, ``t``) and 
-        ``coordinates`` per the topology description below; all :math:`2 t m n`
-        nodes are included.
-    edge_list : iterable (optional, default None)
-        Iterable of edges in the graph. Edges must be 2-tuples of the nodes 
-        specified in ``node_list``, or calculated from (``m``, ``n``, ``t``) and 
-        ``coordinates`` per the topology description below; incompatible edges 
-        are ignored unless you set :code:`check_edge_list=True`. If not 
-        specified, all edges compatible with the ``node_list`` and topology 
-        description are included.
-    data : bool (optional, default :code:`True`)
-        If :code:`True`, each node has a `chimera_index attribute`. The 
-        attribute is a 4-tuple Chimera index as defined below.
-    coordinates : bool (optional, default :code:`False`)
-        If :code:`True`, node labels are 4-tuples, equivalent to the chimera_index
-        attribute as below.  In this case, the ``data`` parameter controls the
-        existence of a `linear_index attribute`, which is an integer.
-    check_node_list : bool (optional, default :code:`False`)
-        If :code:`True`, the ``node_list`` elements are checked for compatibility with
-        the graph topology and node labeling conventions, and an error is thrown
-        if any node is incompatible or duplicates exist. 
-        In other words, the ``node_list`` must specify a subgraph of the 
-        full-yield graph described below. An exception is allowed if 
-        ``check_edge_list=False``, in which case any node in ``edge_list`` is treated as valid.
-    check_edge_list : bool (optional, default :code:`False`)
-        If :code:`True`, the ``edge_list`` elements are checked for compatibility with
-        the graph topology and node labeling conventions, an error is thrown
-        if any edge is incompatible or duplicates exist. 
-        In other words, the ``edge_list`` must specify a subgraph of the 
-        full-yield graph described below.
+    Args:
+        m: Number of rows in the Chimera lattice.
+        n: Number of columns in the Chimera lattice.
+        t: Size of the shore within each Chimera tile.
+        create_using: If provided, this graph is cleared of nodes and edges and filled
+            with the new graph. Usually used to set the type of the graph.
+        node_list: Iterable of nodes in the graph. The nodes should typically be
+            compatible with the requested lattice-shape parameters and coordinate
+            system; incompatible nodes are accepted unless you set :code:`check_node_list=True`.
+            If not specified, calculated from (``m``, ``n``, ``t``) and
+            ``coordinates`` per the topology description below; all :math:`2 t m n`
+            nodes are included.
+        edge_list: Iterable of edges in the graph. Edges must be 2-tuples of the nodes
+            specified in ``node_list``, or calculated from (``m``, ``n``, ``t``) and
+            ``coordinates`` per the topology description below; incompatible edges
+            are ignored unless you set :code:`check_edge_list=True`. If not
+            specified, all edges compatible with the ``node_list`` and topology
+            description are included.
+        data: If :code:`True`, each node has a `chimera_index attribute`. The
+            attribute is a 4-tuple Chimera index as defined below.
+        coordinates: If :code:`True`, node labels are 4-tuples, equivalent to the chimera_index
+            attribute as below.  In this case, the ``data`` parameter controls the
+            existence of a `linear_index attribute`, which is an integer.
+        check_node_list: If :code:`True`, the ``node_list`` elements are checked for compatibility with
+            the graph topology and node labeling conventions, and an error is thrown
+            if any node is incompatible or duplicates exist.
+            In other words, the ``node_list`` must specify a subgraph of the
+            full-yield graph described below. An exception is allowed if
+            ``check_edge_list=False``, in which case any node in ``edge_list`` is treated as valid.
+        check_edge_list: If :code:`True`, the ``edge_list`` elements are checked for compatibility with
+            the graph topology and node labeling conventions, an error is thrown
+            if any edge is incompatible or duplicates exist.
+            In other words, the ``edge_list`` must specify a subgraph of the
+            full-yield graph described below.
 
-    Returns
-    -------
-    G : NetworkX Graph
+    Returns:
         An (m, n, t) Chimera lattice. Nodes are labeled by integers.
 
 
@@ -119,20 +115,19 @@ def chimera_graph(m, n=None, t=None, create_using=None, node_list=None, edge_lis
 
         label = i * n * 2 * t + j * 2 * t + u * t + k
 
-    Examples
-    ========
-    >>> G = dwave.graphs.chimera_graph(1, 1, 2)  # a single Chimera tile
-    >>> len(G)
-    4
-    >>> list(G.nodes())  # doctest: +SKIP
-    [0, 1, 2, 3]
-    >>> list(G.nodes(data=True))  # doctest: +SKIP
-    [(0, {'chimera_index': (0, 0, 0, 0)}),
-     (1, {'chimera_index': (0, 0, 0, 1)}),
-     (2, {'chimera_index': (0, 0, 1, 0)}),
-     (3, {'chimera_index': (0, 0, 1, 1)})]
-    >>> list(G.edges())  # doctest: +SKIP
-    [(0, 2), (0, 3), (1, 2), (1, 3)]
+    Examples:
+        >>> G = dwave.graphs.chimera_graph(1, 1, 2)  # a single Chimera tile
+        >>> len(G)
+        4
+        >>> list(G.nodes())  # doctest: +SKIP
+        [0, 1, 2, 3]
+        >>> list(G.nodes(data=True))  # doctest: +SKIP
+        [(0, {'chimera_index': (0, 0, 0, 0)}),
+        (1, {'chimera_index': (0, 0, 0, 1)}),
+        (2, {'chimera_index': (0, 0, 1, 0)}),
+        (3, {'chimera_index': (0, 0, 1, 1)})]
+        >>> list(G.edges())  # doctest: +SKIP
+        [(0, 2), (0, 3), (1, 2), (1, 3)]
 
     """
     m = int(m)
@@ -247,32 +242,27 @@ def chimera_graph(m, n=None, t=None, create_using=None, node_list=None, edge_lis
     return G
 
 
-def find_chimera_indices(G):
+def find_chimera_indices(G: nx.Graph) -> dict[Hashable, tuple[int, int, int, int]]:
     """Determines the Chimera indices of the nodes in graph ``G``.
 
     See the :func:`~chimera_graph()` function for a definition of a Chimera graph 
     and Chimera indices.
 
-    Parameters
-    ----------
-    G : NetworkX graph
-        Should be a single-tile Chimera graph.
+    Args:
+        G: Should be a single-tile Chimera graph.
 
-    Returns
-    -------
-    chimera_indices : dict
+    Returns:
         A dict of the form {node: (i, j, u, k), ...} where (i, j, u, k)
         is a 4-tuple of integer Chimera indices.
 
-    Examples
-    --------
-    >>> G = dwave.graphs.chimera_graph(1, 1, 4)
-    >>> chimera_indices = dwave.graphs.find_chimera_indices(G)
+    Examples:
+        >>> G = dwave.graphs.chimera_graph(1, 1, 4)
+        >>> chimera_indices = dwave.graphs.find_chimera_indices(G)
 
-    >>> G = nx.Graph()
-    >>> G.add_edges_from([(0, 2), (1, 2), (1, 3), (0, 3)])
-    >>> chimera_indices = dwave.graphs.find_chimera_indices(G)
-    >>> nx.set_node_attributes(G, chimera_indices, 'chimera_index')
+        >>> G = nx.Graph()
+        >>> G.add_edges_from([(0, 2), (1, 2), (1, 3), (0, 3)])
+        >>> chimera_indices = dwave.graphs.find_chimera_indices(G)
+        >>> nx.set_node_attributes(G, chimera_indices, 'chimera_index')
 
     """
 
@@ -328,82 +318,64 @@ def find_chimera_indices(G):
 class chimera_coordinates(object):
     """Provides coordinate converters for the chimera indexing scheme.
 
-    Parameters
-    ----------
-    m : int
-        The number of rows in the Chimera lattice.
-    n : int, optional (default m)
-        The number of columns in the Chimera lattice.
-    t : int, optional (default 4)
-        The size of the shore within each Chimera tile.
+    Args:
+        m: The number of rows in the Chimera lattice.
+        n: The number of columns in the Chimera lattice.
+        t: The size of the shore within each Chimera tile.
 
-    Examples
-    --------
+    Examples:
+        Convert between Chimera coordinates and linear indices directly
 
-    Convert between Chimera coordinates and linear indices directly
+        >>> coords = dwave.graphs.chimera_coordinates(16, 16, 4)
+        >>> coords.chimera_to_linear((0, 2, 0, 1))
+        17
+        >>> coords.linear_to_chimera(17)
+        (0, 2, 0, 1)
 
-    >>> coords = dwave.graphs.chimera_coordinates(16, 16, 4)
-    >>> coords.chimera_to_linear((0, 2, 0, 1))
-    17
-    >>> coords.linear_to_chimera(17)
-    (0, 2, 0, 1)
+        Construct a new graph with the coordinate labels
 
-    Construct a new graph with the coordinate labels
+        >>> C16 = dwave.graphs.chimera_graph(16)
+        >>> coords = dwave.graphs.chimera_coordinates(16)
+        >>> G = nx.Graph()
+        >>> G.add_nodes_from(coords.iter_linear_to_chimera(C16.nodes))
+        >>> G.add_edges_from(coords.iter_linear_to_chimera_pairs(C16.edges))
 
-    >>> C16 = dwave.graphs.chimera_graph(16)
-    >>> coords = dwave.graphs.chimera_coordinates(16)
-    >>> G = nx.Graph()
-    >>> G.add_nodes_from(coords.iter_linear_to_chimera(C16.nodes))
-    >>> G.add_edges_from(coords.iter_linear_to_chimera_pairs(C16.edges))
-
-    See also
-    --------
-    :func:`.chimera_graph` : Describes the various conventions.
+    See also: :func:`.chimera_graph` describes the various conventions.
 
     """
-    def __init__(self, m, n=None, t=None):
+    def __init__(self, m: int, n: int | None = None, t: int | None = None) -> None:
         self.args = m, m if n is None else n, 4 if t is None else t
 
-    def chimera_to_linear(self, q):
+    def chimera_to_linear(self, q: tuple[int, int, int, int]) -> int:
         """Converts a 4-term Chimera coordinate to a linear index.
 
-        Parameters
-        ----------
-        q : 4-tuple
-            Chimera coordinate.
+        Args:
+            q: Chimera coordinate.
 
-        Returns
-        -------
-        r : int
+        Returns:
             Linear index.
 
-        Examples
-        --------
-        >>> dwave.graphs.chimera_coordinates(16).chimera_to_linear((2, 2, 0, 0))
-        272
+        Examples:
+            >>> dwave.graphs.chimera_coordinates(16).chimera_to_linear((2, 2, 0, 0))
+            272
 
         """
         i, j, u, k = q
         m, n, t = self.args
         return ((n*i + j)*2 + u)*t + k
 
-    def linear_to_chimera(self, r):
+    def linear_to_chimera(self, r: int) -> tuple[int, int, int, int]:
         """Converts a linear index to a 4-term Chimera coordinate.
 
-        Parameters
-        ----------
-        r : int
-            Linear index.
+        Args:
+            r: Linear index.
 
-        Returns
-        -------
-        c : 4-tuple
+        Returns:
             Chimera coordinates as defined in :func:`~dwave.graphs.chimera_graph`.
 
-        Examples
-        --------
-        >>> dwave.graphs.chimera_coordinates(16).linear_to_chimera(272)
-        (2, 2, 0, 0)
+        Examples:
+            >>> dwave.graphs.chimera_coordinates(16).linear_to_chimera(272)
+            (2, 2, 0, 0)
         """
         m, n, t = self.args
         r, k = divmod(r, t)
@@ -411,16 +383,14 @@ class chimera_coordinates(object):
         i, j = divmod(r, n)
         return i, j, u, k
 
-    def iter_chimera_to_linear(self, qlist):
-        """Converts a sequence of 4-term Chimera coordinates to linear indices.
-        """
+    def iter_chimera_to_linear(self, qlist: Iterable[tuple[int, int, int, int]]) -> Generator[int]:
+        """Converts a sequence of 4-term Chimera coordinates to linear indices."""
         m, n, t = self.args
         for (i, j, u, k) in qlist:
             yield ((n*i + j)*2 + u)*t + k
 
-    def iter_linear_to_chimera(self, rlist):
-        """Converts a sequence of linear indices to 4-term Chimera coordinates.
-        """
+    def iter_linear_to_chimera(self, rlist: Iterable[int]) -> Generator[tuple[int, int, int, int]]:
+        """Converts a sequence of linear indices to 4-term Chimera coordinates."""
         m, n, t = self.args
         for r in rlist:
             r, k = divmod(r, t)
@@ -429,7 +399,10 @@ class chimera_coordinates(object):
             yield i, j, u, k
 
     @staticmethod
-    def _pair_repack(f, plist):
+    def _pair_repack(
+        f: Callable,
+        plist: Iterable[tuple],
+    ) -> Generator[tuple]:
         """Flattens a sequence of pairs to pass through `f`, and then
         re-pairs the result.
         """
@@ -438,27 +411,23 @@ class chimera_coordinates(object):
             v = next(ulist)
             yield u, v
 
-    def iter_chimera_to_linear_pairs(self, plist):
+    def iter_chimera_to_linear_pairs(self, plist: Iterable[tuple]) -> Generator[tuple]:
         """Converts pairs of 4-term Chimera coordinates to pairs of linear indices.
         """
         return self._pair_repack(self.iter_chimera_to_linear, plist)
 
-    def iter_linear_to_chimera_pairs(self, plist):
+    def iter_linear_to_chimera_pairs(self, plist: Iterable[tuple]) -> Generator[tuple]:
         """Converts pairs of linear indices to pairs of 4-term Chimera coordinates.
         """
         return self._pair_repack(self.iter_linear_to_chimera, plist)
 
-    def graph_to_linear(self, g):
+    def graph_to_linear(self, g: nx.Graph) -> nx.Graph:
         """Returns a copy of the graph ``g`` relabeled to have linear indices.
         
-        Parameters
-        ----------
-        g : NetworkX Graph
-            The Chimera graph to be relabeled.
+        Args:
+            g: The Chimera graph to be relabeled.
 
-        Returns
-        -------
-        G : NetworkX Graph
+        Returns:
             A Chimera graph relabeled with linear indices.
         """
         labels = g.graph.get('labels')
@@ -478,17 +447,13 @@ class chimera_coordinates(object):
                 f"Node labeling {labels} not recognized.  Input must be generated by dwave.graphs.chimera_graph."
             )
 
-    def graph_to_chimera(self, g):
+    def graph_to_chimera(self, g: nx.Graph) -> nx.Graph:
         """Returns a copy of the graph ``g`` relabeled to have Chimera coordinates.
         
-        Parameters
-        ----------
-        g : NetworkX Graph
-            The Chimera graph to be relabeled.        
+        Args:
+            g: The Chimera graph to be relabeled.
 
-        Returns
-        -------
-        G : NetworkX Graph
+        Returns:
             A Chimera graph relabeled with Chimera coordinates.
 
         """
@@ -513,105 +478,86 @@ class chimera_coordinates(object):
 class __chimera_coordinates_cache_dict(dict):
     """An internal-use cached factory for `chimera_coordinates` objects"""
 
-    def __missing__(self, key):
+    def __missing__(self, key: tuple) -> chimera_coordinates:
         self[key] = val = chimera_coordinates(*key)
         return val
 
 
 _chimera_coordinates_cache = __chimera_coordinates_cache_dict()
 
-def linear_to_chimera(r, m, n=None, t=None):
+def linear_to_chimera(
+    r: int,
+    m: int,
+    n: int | None = None,
+    t: int | None = None,
+) -> tuple[int, int, int, int]:
     """Converts the linear index ``r`` into a Chimera index.
 
-    Parameters
-    ----------
-    r : int
-        The linear index value.
-    m : int
-        Number of rows in the Chimera lattice.
-    n : int (optional, default m)
-        Number of columns in the Chimera lattice.
-    t : int (optional, default 4)
-        Size of the shore within each Chimera tile.
+    Args:
+        r: The linear index value.
+        m: Number of rows in the Chimera lattice.
+        n: Number of columns in the Chimera lattice.
+        t: Size of the shore within each Chimera tile.
 
+    Returns:
+        The Chimera index ``(i, j, u, k)`` associated with ``r``.
 
-    Returns
-    -------
-    i : int
-        The column of the Chimera index's unit cell associated with `r`.
-    j : int
-        The row of the Chimera index's unit cell associated with `r`.
-    u : int
-        Side of the bipartite: whether the index is even (0) or odd (1).
-        graph of the Chimera unit cell.
-    k : int
-        Index into the Chimera unit cell.
-
-    Examples
-    --------
-
-    >>> G = dwave.graphs.linear_to_chimera(212, 8, 8, 4)
-    (3, 2, 1, 0)
+    Examples:
+        >>> G = dwave.graphs.linear_to_chimera(212, 8, 8, 4)
+        (3, 2, 1, 0)
 
     """
     return _chimera_coordinates_cache[m, n, t].linear_to_chimera(r)
 
 
-def chimera_to_linear(i, j, u, k, m, n=None, t=None):
+def chimera_to_linear(
+    i: int,
+    j: int,
+    u: int,
+    k: int,
+    m: int,
+    n: int | None = None,
+    t: int | None = None,
+) -> int:
     """Converts the Chimera index ``(i, j, u, k)`` into a linear index.
 
-    Parameters
-    ----------
-    i : int
-        The column of the Chimera index's unit cell associated with ``r``.
-    j : int
-        The row of the Chimera index's unit cell associated with ``r``.
-    u : int
-        Side of the bipartite: whether the index is even (0) or odd (1).
-        graph of the Chimera unit cell.
-    k : int
-        Index into the Chimera unit cell.
-    m : int
-        Number of rows in the Chimera lattice.
-    n : int (optional, default m)
-        Number of columns in the Chimera lattice.
-    t : int (optional, default 4)
-        Size of the shore within each Chimera tile.
+    Args:
+        i: The column of the Chimera index's unit cell associated with ``r``.
+        j: The row of the Chimera index's unit cell associated with ``r``.
+        u: Side of the bipartite: whether the index is even (0) or odd (1)
+            graph of the Chimera unit cell.
+        k: Index into the Chimera unit cell.
+        m: Number of rows in the Chimera lattice.
+        n: Number of columns in the Chimera lattice.
+        t: Size of the shore within each Chimera tile.
 
-
-    Returns
-    -------
-    r : int
+    Returns:
         The linear index node label corresponding to ``(i, j, u, k)``.
 
-    Examples
-    --------
-
-    >>> G = dwave.graphs.chimera_to_linear(3, 2, 1, 0, 8, 8, 4)
-    212
+    Examples:
+        >>> G = dwave.graphs.chimera_to_linear(3, 2, 1, 0, 8, 8, 4)
+        212
 
     """
     return _chimera_coordinates_cache[m, n, t].chimera_to_linear((i, j, u, k))
 
 
-def _chimera_sublattice_mapping(source_to_chimera, chimera_to_target, offset):
+def _chimera_sublattice_mapping(
+    source_to_chimera: Callable,
+    chimera_to_target: Callable,
+    offset: tuple[int, int],
+) -> Callable:
     """Constructs a mapping from one chimera graph to another, via an offset.
     This function is used by chimera_sublattice_mappings, and serves to 
     construct a closure that is stable under iteration therein.
 
-    Parameters
-    ----------
-        source_to_chimera : function
-            A function mapping a source node to a chimera-coordinate. 
-        chimera_to_target: function
-            A function mapping a chimera coordinate to a target nodes.
-        offset : tuple (int, int)
-            A pair of integers representing the y- and x-offset of the sublattice.
+    Args:
+        source_to_chimera: A function mapping a source node to a chimera-coordinate.
+        chimera_to_target: A function mapping a chimera coordinate to a target nodes.
+        offset: A pair of integers representing the y- and x-offset of the sublattice.
 
-    Returns
-    -------
-        mapping : function
-            The function implementing the mapping from the source Chimera
+    Returns:
+        mapping: The function implementing the mapping from the source Chimera
             graph to the target Chimera graph.  We store ``offset`` in the
             attribute ``mapping.offset`` for later reconstruction.
         
@@ -628,7 +574,11 @@ def _chimera_sublattice_mapping(source_to_chimera, chimera_to_target, offset):
     return mapping
 
 
-def chimera_sublattice_mappings(source, target, offset_list=None):
+def chimera_sublattice_mappings(
+    source: nx.Graph,
+    target: nx.Graph,
+    offset_list: Iterable[tuple] | None = None,
+) -> Generator[Callable]:
     r"""Yields mappings from a Chimera graph into a larger Chimera graph.
 
     A sublattice mapping is a function from the nodes of a
@@ -654,33 +604,26 @@ def chimera_sublattice_mappings(source, target, offset_list=None):
         The yield is the percentage of working qubits on a QPU and the subset 
         of available qubits is called the :ref:`working graph <qpu_topologies>`.
 
-    Parameters
-    ----------
-        source : NetworkX Graph
-            The Chimera graph that nodes are input from.
-        target : NetworkX Graph
-            The Chimera graph that nodes are output to.
-        offset_list : iterable (tuple), optional (default None)
-            An iterable of offsets that can be used to reconstruct a set of
+    Args:
+        source: The Chimera graph that nodes are input from.
+        target: The Chimera graph that nodes are output to.
+        offset_list: An iterable of offsets that can be used to reconstruct a set of
             mappings since the offset used to generate a single mapping is stored
             in the ``offset`` attribute of that mapping.
 
-    Yields
-    ------
-        mapping : function
-            A function from the nodes of the source graph to the nodes 
-            of the target graph.  The offset used to generate this mapping 
-            is stored in ``mapping.offset``, which can be collected and passed 
+    Yields:
+        mapping: A function from the nodes of the source graph to the nodes
+            of the target graph.  The offset used to generate this mapping
+            is stored in ``mapping.offset``, which can be collected and passed
             into ``offset_list`` in a later session.
 
-    Notes
-    -----
-    The full group of a Chimera graph's isomorphisms includes 
-    mappings which permute tile indices on a per-row and per-column basis in
-    addition to reflections and rotations of the grid of unit cells where 
-    rotations by 90 and 270 degrees induce a change in orientation.  
-    Although the full set of sublattice mappings would take those isomorphisms 
-    into account, this function does not handle that complex task.
+    Notes:
+        The full group of a Chimera graph's isomorphisms includes 
+        mappings which permute tile indices on a per-row and per-column basis in
+        addition to reflections and rotations of the grid of unit cells where 
+        rotations by 90 and 270 degrees induce a change in orientation.  
+        Although the full set of sublattice mappings would take those isomorphisms 
+        into account, this function does not handle that complex task.
     
     """
     if not (source.graph.get('family') == target.graph.get('family') == 'chimera'):
@@ -720,42 +663,40 @@ def chimera_sublattice_mappings(source, target, offset_list=None):
     for offset in offset_list:
         yield _chimera_sublattice_mapping(source_to_chimera, chimera_to_target, offset)
 
-def chimera_torus(m, n=None, t=None, node_list=None, edge_list=None):
+def chimera_torus(
+    m: int,
+    n: int | None = None,
+    t: int | None = None,
+    node_list: Iterable | None = None,
+    edge_list: Iterable[tuple] | None = None,
+) -> nx.Graph:
     """Creates a defect-free Chimera lattice of size :math:`(m, n, t)` 
     subject to periodic boundary conditions.
 
 
-    Parameters
-    ----------
-    m : int
-        Number of rows in the Chimera torus lattice.
-        If :math:`m<3` translational invariance already applies in the rows. If 
-        :math:`m>=3` additional external couplers are added, reestablishing 
-        translational invariance.
-        Connectivity of all horizontal qubits is :math:`min(m - 1, 2) + 2t`.
-    n : int (optional, default m)
-        Number of columns in the Chimera torus lattice.
-        If :math:`n<3` translational invariance already applies in the columns. If 
-        :math:`n>=3` additional external couplers are added, reestablishing 
-        translational invariance.
-        Connectivity of all vertical qubits is :math:`min(n - 1, 2) + 2t`.
-    t : int (optional, default 4)
-        Size of the shore within each Chimera tile.
-    node_list : iterable (optional, default None)
-        Iterable of nodes in the graph. If None, nodes are generated 
-        for an undiluted torus calculated from ``m``, ``n`` and ``t``
-        as described below. The node list must describe a subset
-        of the torus nodes to be maintained in the graph 
-        using the coordinate node labeling scheme.
-    edge_list : iterable (optional, default None)
-        Iterable of edges in the graph. If None, edges are generated
-        for an undiluted torus calculated from ``m``, ``n`` and ``t``
-        as described below. The edge list must describe 
-        a subgraph of the torus, using the coordinate node labeling scheme.
+    Args:
+        m: Number of rows in the Chimera torus lattice.
+            If :math:`m<3` translational invariance already applies in the rows. If
+            :math:`m>=3` additional external couplers are added, reestablishing
+            translational invariance.
+            Connectivity of all horizontal qubits is :math:`min(m - 1, 2) + 2t`.
+        n: Number of columns in the Chimera torus lattice.
+            If :math:`n<3` translational invariance already applies in the columns. If
+            :math:`n>=3` additional external couplers are added, reestablishing
+            translational invariance.
+            Connectivity of all vertical qubits is :math:`min(n - 1, 2) + 2t`.
+        t: Size of the shore within each Chimera tile.
+        node_list: Iterable of nodes in the graph. If None, nodes are generated
+            for an undiluted torus calculated from ``m``, ``n`` and ``t``
+            as described below. The node list must describe a subset
+            of the torus nodes to be maintained in the graph
+            using the coordinate node labeling scheme.
+        edge_list: Iterable of edges in the graph. If None, edges are generated
+            for an undiluted torus calculated from ``m``, ``n`` and ``t``
+            as described below. The edge list must describe
+            a subgraph of the torus, using the coordinate node labeling scheme.
 
-    Returns
-    -------
-    G : NetworkX Graph
+    Returns:
         A Chimera torus with shape (m, n, t), with Chimera coordinate node labels.
 
 
@@ -772,13 +713,12 @@ def chimera_torus(m, n=None, t=None, node_list=None, edge_list=None):
 
     See :func:`.chimera_graph` for additional information.
 
-    Examples
-    ========
-    >>> G = dwave.graphs.chimera_torus(3, 3, 4)  # a 3x3 tile chimera graph (connectivity 6)
-    >>> len(G)
-    72
-    >>> any([len(list(G.neighbors(n))) != 6 for n in G.nodes])
-    False
+    Examples:
+        >>> G = dwave.graphs.chimera_torus(3, 3, 4)  # a 3x3 tile chimera graph (connectivity 6)
+        >>> len(G)
+        72
+        >>> any([len(list(G.neighbors(n))) != 6 for n in G.nodes])
+        False
 
     """
     # Graph properties are by and large inherited from chimera_graph

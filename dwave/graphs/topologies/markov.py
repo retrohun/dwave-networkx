@@ -13,7 +13,7 @@
 #    limitations under the License.
 
 import itertools
-import collections.abc as abc
+from collections.abc import Mapping
 
 import networkx as nx
 
@@ -53,33 +53,33 @@ __all__ = 'markov_network',
 #
 
 
-def markov_network(potentials):
+def markov_network(potentials: Mapping[tuple, dict]) -> nx.Graph:
     """Creates a Markov Network from potentials.
 
-    A Markov Network is also knows as a `Markov Random Field`_
+    A Markov Network is also known as a `Markov Random Field`_.
 
-    Parameters
-    ----------
-    potentials : dict[tuple, dict]
-        A dict where the keys are either nodes or edges and the values are a
-        dictionary of potentials. The potential dict should map each possible
-        assignment of the nodes/edges to their energy.
+    Args:
+        potentials: A dict where the keys are either nodes or edges and the
+            values are a dictionary of potentials. The potential dict should
+            map each possible assignment of the nodes/edges to their energy.
 
-    Returns
-    -------
-    MN : :obj:`networkx.Graph`
+    Returns:
         A markov network as a graph where each node/edge stores its potential
         dict as above.
 
-    Examples
-    --------
-    >>> potentials = {('a', 'b'): {(0, 0): -1,
-    ...                            (0, 1): .5,
-    ...                            (1, 0): .5,
-    ...                            (1, 1): 2}}
-    >>> MN = dwave.graphs.markov_network(potentials)
-    >>> MN['a']['b']['potential'][(0, 0)]
-    -1
+    Raises:
+        TypeError: If potentials for a clique are not provided as a mapping.
+        ValueError: If potentials are incomplete for a clique or clique size is
+            greater than 2.
+
+    Examples:
+        >>> potentials = {('a', 'b'): {(0, 0): -1,
+        ...                            (0, 1): .5,
+        ...                            (1, 0): .5,
+        ...                            (1, 1): 2}}
+        >>> MN = dwave.graphs.markov_network(potentials)
+        >>> MN['a']['b']['potential'][(0, 0)]
+        -1
 
     .. _Markov Random Field: https://en.wikipedia.org/wiki/Markov_random_field
 
@@ -97,7 +97,7 @@ def markov_network(potentials):
 
         # because this data potentially wont be used for a while, let's do some
         # input checking now and save some debugging issues later
-        if not isinstance(phis, abc.Mapping):
+        if not isinstance(phis, Mapping):
             raise TypeError("phis should be a dict")
         elif not all(config in phis for config in itertools.product((0, 1), repeat=num_vars)):
             raise ValueError("not all potentials provided for {!r}".format(clique))

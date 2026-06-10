@@ -19,56 +19,56 @@
 __all__ = ["zephyr_coordinates"]
 
 
+from collections.abc import Callable, Generator, Iterable, Iterator, Sequence
+
+import networkx as nx
+
 from dwave.graphs.topologies.zephyr.graphs import zephyr_graph
 
 
 class zephyr_coordinates(object):
     """Provides coordinate converters for the Zephyr indexing schemes.
 
-    Parameters
-    ----------
-    m : int
-        Grid parameter for the Zephyr lattice.
-    t : int
-        Tile parameter for the Zephyr lattice; must be even.
+    Args:
+        m: Grid parameter for the Zephyr lattice.
+        t: Tile parameter for the Zephyr lattice; must be even.
 
-    See also
-    --------
-    :func:`.zephyr_graph` : Describes the various coordinate conventions.
+    See also :func:`dwave.graphs.topologies.zephyr.zephyr_graph` for
+    descriptions the various coordinate conventions.
 
     """
-    def __init__(self, m, t=4):
+    def __init__(self, m: int, t: int = 4) -> None:
         self.args = m, 2 * m + 1, t
 
-    def zephyr_to_linear(self, q):
+    def zephyr_to_linear(self, q: tuple[int, int, int, int, int]) -> int:
         """Converts a 5-term Zephyr coordinate into a linear index.
 
-        Parameters
-        ----------
-        q : 5-tuple
-            Zephyr coordinate.
+        Args:
+            q: 5-term Zephyr coordinate.
 
-        Examples
-        --------
-        >>> dwave.graphs.zephyr_coordinates(2).zephyr_to_linear((0, 1, 2, 1, 0))
-        26
+        Returns:
+            Linear index.
+
+        Example:
+            >>> dwave.graphs.zephyr_coordinates(2).zephyr_to_linear((0, 1, 2, 1, 0))
+            26
         """
         u, w, k, j, z = q
         m, M, t = self.args
         return (((u * M + w) * t + k) * 2 + j) * m + z
 
-    def linear_to_zephyr(self, r):
+    def linear_to_zephyr(self, r: int) -> tuple[int, int, int, int, int]:
         """Converts a linear index into a 5-term Zephyr coordinate.
 
-        Parameters
-        ----------
-        r : int
-            Linear index.
+        Args:
+            r: Linear index.
 
-        Examples
-        --------
-        >>> dwave.graphs.zephyr_coordinates(2).linear_to_zephyr(137)
-        (1, 3, 2, 0, 1)
+        Returns:
+            5-term Zephyr coordinate.
+
+        Example:
+            >>> dwave.graphs.zephyr_coordinates(2).linear_to_zephyr(137)
+            (1, 3, 2, 0, 1)
 
         """
         m, M, t = self.args
@@ -78,15 +78,31 @@ class zephyr_coordinates(object):
         u, w = divmod(r, M)
         return u, w, k, j, z
 
-    def iter_zephyr_to_linear(self, qlist):
+    def iter_zephyr_to_linear(
+            self, qlist: Sequence[tuple[int, int, int, int, int]]
+        ) -> Generator[int]:
         """Converts a sequence of 5-term Zephyr coordinates to linear indices.
+        
+        Args:
+            qlist: Sequence of 5-term Zephyr coordinates.
+            
+        Yields:
+            Linear index of each 5-term Zephyr coordinate.
         """
         m, M, t = self.args
         for (u, w, k, j, z) in qlist:
             yield (((u * M + w) * t + k) * 2 + j) * m + z
 
-    def iter_linear_to_zephyr(self, rlist):
+    def iter_linear_to_zephyr(
+            self, rlist: Sequence[int]
+        ) -> Generator[tuple[int, int, int, int, int]]:
         """Converts a sequence of linear indices to 5-term Zephyr coordinates.
+
+        Args:
+            rlist: Sequence of linear indices.
+            
+        Yields:
+            5-term Zephyr coordinates of each linear index.
         """
         m, M, t = self.args
         for r in rlist:
@@ -97,36 +113,31 @@ class zephyr_coordinates(object):
             yield u, w, k, j, z
 
     @staticmethod
-    def _pair_repack(f, plist):
-        """Flattens a sequence of pairs to pass through ``f``, and then
-        re-pairs the result.
-        """
+    def _pair_repack(f: Callable, plist: Iterable[tuple]) -> Generator[tuple]:
+        """Flattens a sequence of pairs to pass through f, and then re-pairs the result."""
         ulist = f(u for p in plist for u in p)
         for u in ulist:
             v = next(ulist)
             yield u, v
 
-    def iter_zephyr_to_linear_pairs(self, plist):
-        """Converts pairs of 5-term Zephyr coordinates to pairs of linear indices.
-        """
+    def iter_zephyr_to_linear_pairs(self, plist: Iterable[tuple]) -> Generator[tuple]:
+        """Converts pairs of 5-term Zephyr coordinates to pairs of linear indices."""
         return self._pair_repack(self.iter_zephyr_to_linear, plist)
 
-    def iter_linear_to_zephyr_pairs(self, plist):
-        """Converts pairs of linear indices to pairs of 5-term Zephyr coordinates.
-        """
+    def iter_linear_to_zephyr_pairs(
+        self,
+        plist: Iterable[tuple],
+    ) -> Generator[tuple]:
+        """Converts pairs of linear indices to pairs of 5-term Zephyr coordinates."""
         return self._pair_repack(self.iter_linear_to_zephyr, plist)
 
-    def graph_to_linear(self, g):
-        """Returns a copy of the graph ``g`` relabeled to have linear indices.
-        
-        Parameters
-        ----------
-        g : NetworkX Graph
-            The Zephyr graph to be relabeled.        
-        
-        Returns
-        -------
-        G : NetworkX Graph
+    def graph_to_linear(self, g: nx.Graph) -> nx.Graph:
+        """Returns a copy of the graph g relabeled to have linear indices.
+
+        Args:
+            g: The Zephyr graph to be relabeled.
+
+        Returns:
             A Zephyr graph relabeled with linear indices.
         """
         labels = g.graph.get('labels')
@@ -149,17 +160,13 @@ class zephyr_coordinates(object):
             data=g.graph['data'],
         )
 
-    def graph_to_zephyr(self, g):
-        """Returns a copy of the graph ``g`` relabeled to have Zephyr coordinates.
-        
-        Parameters
-        ----------
-        g : NetworkX Graph
-            The Zephyr graph to be relabeled.        
-        
-        Returns
-        -------
-        G : NetworkX Graph
+    def graph_to_zephyr(self, g: nx.Graph) -> nx.Graph:
+        """Returns a copy of the graph g relabeled to have Zephyr coordinates.
+
+        Args:
+            g: The Zephyr graph to be relabeled.
+
+        Returns:
             A Zephyr graph relabeled with Zephyr coordinates.
         """
         labels = g.graph.get('labels')
@@ -185,9 +192,9 @@ class zephyr_coordinates(object):
 
 
 class __zephyr_coordinates_cache_dict(dict):
-    """An internal-use cached factory for `zephyr_coordinates` objects"""
+    """An internal-use cached factory for `zephyr_coordinates` objects."""
 
-    def __missing__(self, key):
+    def __missing__(self, key: tuple) -> zephyr_coordinates:
         self[key] = val = zephyr_coordinates(*key)
         return val
 
