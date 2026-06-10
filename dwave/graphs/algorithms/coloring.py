@@ -203,7 +203,7 @@ def is_vertex_coloring(graph: nx.Graph, coloring: dict[Hashable, Hashable]) -> b
     return all(coloring[u] != coloring[v] for u, v in graph.edges)
 
 
-def zephyr_four_color(q: tuple[int, int, int, int, int], scheme: int = Literal[0, 1]) -> int:
+def zephyr_four_color(q: tuple[int, int, int, int, int], scheme: Literal[0, 1] = 0) -> int:
     """Returns a node color sufficient for four coloring a Zephyr graph.
 
     Args:

@@ -33,7 +33,7 @@ class zephyr_coordinates:
         m: Grid parameter for the Zephyr lattice.
         t: Tile parameter for the Zephyr lattice; must be even.
 
-    See also :func:`dwave.graphs.topologies.zephyr.zephyr_graph` for
+    See also :func:`~dwave.graphs.topologies.zephyr.graphs.zephyr_graph` for
     descriptions the various coordinate conventions.
 
     """
