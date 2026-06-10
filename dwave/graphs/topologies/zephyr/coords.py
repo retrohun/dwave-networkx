@@ -26,7 +26,7 @@ import networkx as nx
 from dwave.graphs.topologies.zephyr.graphs import zephyr_graph
 
 
-class zephyr_coordinates(object):
+class zephyr_coordinates:
     """Provides coordinate converters for the Zephyr indexing schemes.
 
     Args:

@@ -538,7 +538,7 @@ def fragmented_edges(pegasus_graph: nx.Graph) -> Generator[tuple]:
 # Developer note: we could implement a function that creates the iter_*_to_* and
 # iter_*_to_*_pairs methods just-in-time, but there are a small enough number
 # that for now it makes sense to do them by hand.
-class pegasus_coordinates(object):
+class pegasus_coordinates:
     """Provides coordinate converters for the Pegasus indexing schemes.
 
     Args:

@@ -325,7 +325,7 @@ def find_chimera_indices(G: nx.Graph) -> dict[Hashable, tuple[int, int, int, int
     raise Exception('not yet implemented for Chimera graphs with more than one tile')
 
 
-class chimera_coordinates(object):
+class chimera_coordinates:
     """Provides coordinate converters for the chimera indexing scheme.
 
     Args:
