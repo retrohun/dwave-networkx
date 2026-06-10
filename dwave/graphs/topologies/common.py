@@ -12,13 +12,9 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 
-__all__ = ["_add_compatible_edges", "_add_compatible_nodes", "_add_compatible_terms"]
-
-from typing import TYPE_CHECKING
 from collections.abc import Iterable
 
-if TYPE_CHECKING:
-    import networkx as nx
+import networkx as nx
 
 
 def _add_compatible_edges(G: nx.Graph, edge_list: Iterable | None) -> None:

@@ -21,7 +21,7 @@ import networkx as nx
 from networkx.algorithms.bipartite import color
 from networkx import diameter
 
-from .common import _add_compatible_nodes, _add_compatible_edges, _add_compatible_terms
+from dwave.graphs.topologies.common import _add_compatible_nodes, _add_compatible_edges, _add_compatible_terms
 
 __all__ = ['chimera_graph',
            'chimera_coordinates',

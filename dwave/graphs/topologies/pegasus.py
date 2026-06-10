@@ -19,8 +19,8 @@ from itertools import product
 
 import networkx as nx
 
-from .chimera import _chimera_coordinates_cache
-from .common import _add_compatible_edges, _add_compatible_nodes, _add_compatible_terms
+from dwave.graphs.topologies.chimera import _chimera_coordinates_cache
+from dwave.graphs.topologies.common import _add_compatible_edges, _add_compatible_nodes, _add_compatible_terms
 
 __all__ = ['pegasus_graph',
            'pegasus_coordinates',
