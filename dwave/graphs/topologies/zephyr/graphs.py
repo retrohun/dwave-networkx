@@ -43,33 +43,42 @@ def zephyr_graph(
     The Zephyr topology is described in [Boo2021]_.
 
     Args:
-        m: Grid parameter for the Zephyr lattice.
-        t: Tile parameter for the Zephyr lattice.
-        create_using: If provided, this graph is cleared of nodes and edges and filled
+        m:
+            Grid parameter for the Zephyr lattice.
+        t:
+            Tile parameter for the Zephyr lattice.
+        create_using:
+            If provided, this graph is cleared of nodes and edges and filled
             with the new graph. Usually used to set the type of the graph.
-        node_list: Iterable of nodes in the graph. If not specified, calculated from (``m``, ``t``)
+        node_list:
+            Iterable of nodes in the graph. If not specified, calculated from (``m``, ``t``)
             and ``coordinates``. The nodes should typically be compatible with the
             requested lattice shape parameters and coordinate system, incompatible
             nodes are accepted unless you set :code:`check_node_list=True`. If not
             specified, all :math:`4 t m (2 m + 1)` nodes compatible with the
             topology description are included.
-        edge_list: Iterable of edges in the graph. Edges must be 2-tuples of the nodes
+        edge_list:
+            Iterable of edges in the graph. Edges must be 2-tuples of the nodes
             specified in node_list, or calculated from (``m``, ``t``) and ``coordinates``
             per the topology description below; incompatible edges are ignored
             unless you set :code:`check_edge_list=True`. If not specified, all edges
             compatible with the ``node_list`` and topology description are included.
-        data: If :code:`True`, adds to each node an attribute with a format that depends on
+        data:
+            If :code:`True`, adds to each node an attribute with a format that depends on
             the ``coordinates`` parameter: a 5-tuple ``'zephyr_index'`` if
             :code:`coordinates=False` and an integer ``'linear_index'`` if ``coordinates``
             is :code:`True`.
-        coordinates: If :code:`True`, node labels are 5-tuple Zephyr indices.
-        check_node_list: If :code:`True`, the ``node_list`` elements are checked for compatibility with
+        coordinates: 
+            If :code:`True`, node labels are 5-tuple Zephyr indices.
+        check_node_list:
+            If :code:`True`, the ``node_list`` elements are checked for compatibility with
             the graph topology and node labeling conventions, and an error is thrown
             if any node is incompatible or duplicates exist.
             In other words, ``node_lists`` must specify a subgraph of the default
             (full yield) graph described below. An exception is allowed if
             ``check_edge_list=False``, any node in edge_list will also be treated as valid.
-        check_edge_list: If :code:`True`, ``edge_list`` elements are checked for compatibility with
+        check_edge_list:
+            If :code:`True`, ``edge_list`` elements are checked for compatibility with
             the graph topology and node labeling conventions, and an error is thrown
             if any edge is incompatible or duplicates exist.
             In other words, ``edge_list`` must specify a subgraph of the default
@@ -317,9 +326,12 @@ def _single_chimera_zephyr_sublattice_mapping(
     subgraph mappings.
 
     Args:
-        source_to_chimera: A function mapping a source node to a chimera coordinate.
-        zephyr_to_target: A function mapping a zephyr coordinate to a target node.
-        offset: A tuple of ints (t, k_offset0, k_offset1, y_offset, x_offset)
+        source_to_chimera:
+            A function mapping a source node to a chimera coordinate.
+        zephyr_to_target:
+            A function mapping a zephyr coordinate to a target node.
+        offset:
+            A tuple of ints (t, k_offset0, k_offset1, y_offset, x_offset)
             defining the sublattice mapping.
 
     Returns:
@@ -368,9 +380,12 @@ def _double_chimera_zephyr_sublattice_mapping(
     as with ordinary Chimera subgraph mappings.
 
     Args:
-        source_to_chimera: A function mapping a source node to a chimera coordinate.
-        zephyr_to_target: A function mapping a zephyr coordinate to a target node.
-        offset: A tuple of ints ``(t, j0, j1, y_offset, x_offset)`` defining the
+        source_to_chimera:
+            A function mapping a source node to a chimera coordinate.
+        zephyr_to_target:
+            A function mapping a zephyr coordinate to a target node.
+        offset:
+            A tuple of ints ``(t, j0, j1, y_offset, x_offset)`` defining the
             sublattice mapping.
 
     Returns:
@@ -429,9 +444,12 @@ def zephyr_sublattice_mappings(
         of available qubits is called the :ref:`working graph <qpu_topologies>`.
         
     Args:
-        source: The Chimera or Zephyr graph that nodes are input from.
-        target: The Zephyr graph that nodes are output to.
-        offset_list: An iterable of offsets that can be used to reconstruct a set of
+        source:
+            The Chimera or Zephyr graph that nodes are input from.
+        target:
+            The Zephyr graph that nodes are output to.
+        offset_list:
+            An iterable of offsets that can be used to reconstruct a set of
             mappings. The offset used to generate a single mapping is stored
             in the ``offset`` attribute of that mapping.
 
@@ -542,15 +560,19 @@ def zephyr_torus(
     on an :math:`m` by :math:`m` torus. 
 
     Args:
-        m: Grid parameter for the Zephyr lattice.
+        m:
+            Grid parameter for the Zephyr lattice.
             Connectivity of all nodes is :math:`4t + min(2m - 1, 4)`.
-        t: Tile parameter for the Zephyr lattice.
-        node_list: Iterable of nodes in the graph. If None, nodes are generated
+        t: 
+            Tile parameter for the Zephyr lattice.
+        node_list:
+            Iterable of nodes in the graph. If None, nodes are generated
             for an undiluted torus calculated from ``m`` and ``t``
             as described below. The node list must describe a subset
             of the torus nodes to be maintained in the graph
             using the coordinate node labeling scheme.
-        edge_list: Iterable of edges in the graph. If None, edges are generated
+        edge_list:
+            Iterable of edges in the graph. If None, edges are generated
             for an undiluted torus calculated from ``m`` and ``t``
             as described below. The edge list must describe
             a subgraph of the torus, using the coordinate node labeling scheme.

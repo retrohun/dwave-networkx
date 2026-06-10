@@ -46,40 +46,50 @@ def pegasus_graph(
     """Creates a Pegasus graph with size parameter ``m``.
 
     Args:
-        m: Size parameter for the Pegasus lattice.
-        create_using: If provided, this graph is cleared of nodes and edges and filled
+        m:
+            Size parameter for the Pegasus lattice.
+        create_using:
+            If provided, this graph is cleared of nodes and edges and filled
             with the new graph. Usually used to set the type of the graph.
-        node_list: Iterable of nodes in the graph.  The nodes should typically be
+        node_list:
+            Iterable of nodes in the graph.  The nodes should typically be
             compatible with the requested lattice shape parameters and coordinate
             system, incompatible nodes are accepted unless you set :code:`check_node_list=True`.
             If not specified, calculated from ``m``, ``fabric_only``,
             ``nice_coordinates``, ``offset_lists`` and ``offset_index`` and
             ``coordinates`` per the topology description below.
-        edge_list: Iterable of edges in the graph. Edges must be 2-tuples of the nodes
+        edge_list:
+            Iterable of edges in the graph. Edges must be 2-tuples of the nodes
             specified in ``node_list``, or calculated from ``m``, ``fabric_only``,
             ``nice_coordinates``, ``offset_lists`` and ``offset_index`` and
             ``coordinates`` per the topology description below; incompatible edges
             are ignored unless you set :code:`check_edge_list=True`. If not
             specified, all edges compatible with the ``node_list`` and topology
             description are included.
-        data: If :code:`True`, each node has a pegasus_index attribute. The attribute
+        data:
+            If :code:`True`, each node has a pegasus_index attribute. The attribute
             is a 4-tuple Pegasus index as defined below. If the `coordinates`
             parameter is :code:`True`, a linear_index, which is an integer, is used.
-        coordinates: If :code:`True`, node labels are 4-tuple Pegasus indices. Ignored if the
+        coordinates:
+            If :code:`True`, node labels are 4-tuple Pegasus indices. Ignored if the
             `nice_coordinates` parameter is :code:`True`.
-        offset_lists: Directly controls the offsets. Each list in the pair must have length 12
+        offset_lists:
+            Directly controls the offsets. Each list in the pair must have length 12
             and contain even ints.  If `offset_lists` is not None, the `offsets_index`
             parameter must be None.
-        offsets_index: A number between 0 and 7, inclusive, that selects a preconfigured
+        offsets_index:
+            A number between 0 and 7, inclusive, that selects a preconfigured
             set of topological parameters. If both the `offsets_index` and
             `offset_lists` parameters are None, the `offsets_index` parameters is set
             to zero. At least one of these two parameters must be None.
-        fabric_only: The Pegasus graph, by definition, has some disconnected
+        fabric_only:
+            The Pegasus graph, by definition, has some disconnected
             components.  If :code:`True`, the generator only constructs nodes from the
             largest component. If :code:`False`, the full disconnected graph is
             constructed. Ignored if the `edge_lists` parameter is not None or
             `nice_coordinates` is :code:`True`.
-        nice_coordinates: If the `offsets_index` parameter is 0, the graph uses a "nicer"
+        nice_coordinates:
+            If the `offsets_index` parameter is 0, the graph uses a "nicer"
             coordinate system, more compatible with Chimera addressing.
             These coordinates are 5-tuples taking the form :math:`(t, y, x, u, k)` where
             :math:`0 <= x < M-1`, :math:`0 <= y < M-1`, :math:`0 <= u < 2`,
@@ -87,13 +97,15 @@ def pegasus_graph(
             For any given :math:`0 <= t0 < 3`, the subgraph of nodes with :math:`t = t0`
             has the structure of `chimera(M-1, M-1, 4)` with the addition of odd couplers.
             Supercedes both the `fabric_only` and `coordinates` parameters.
-        check_node_list: If :code:`True`, the ``node_list`` elements are checked for compatibility with
+        check_node_list:
+            If :code:`True`, the ``node_list`` elements are checked for compatibility with
             the graph topology and node labeling conventions, an error is thrown
             if any node is incompatible or duplicates exist.
             In other words, only node lists that specify subgraphs of the default
             (full yield) graph are permitted. An exception is allowed if
             ``check_edge_list=False``, in which case any node in ``edge_list`` is treated as valid.
-        check_edge_list: If :code:`True`, the edge_list elements are checked for compatibility with
+        check_edge_list:
+            If :code:`True`, the edge_list elements are checked for compatibility with
             the graph topology and node labeling conventions, an error is thrown
             if any edge is incompatible or duplicates exist.
             In other words, only edge_lists that specify subgraphs of the default
@@ -857,9 +869,12 @@ def _chimera_pegasus_sublattice_mapping(
     construct a closure that is stable under iteration therein.
 
     Args:
-        source_to_chimera: A function mapping a source node to a chimera coordinate.
-        nice_to_target: A function mapping a pegasus nice-coordinate to a target node.
-        offset: A triplet of ints representing the t-, y- and x-offset of the
+        source_to_chimera:
+            A function mapping a source node to a chimera coordinate.
+        nice_to_target:
+            A function mapping a pegasus nice-coordinate to a target node.
+        offset:
+            A triplet of ints representing the t-, y- and x-offset of the
             sublattice.
 
     Returns:
@@ -905,9 +920,12 @@ def _pegasus_pegasus_sublattice_mapping(
     construct a closure that is stable under iteration therein.
 
     Args:
-        source_to_nice: A function mapping a source node to a pegasus nice-coordinate.
-        nice_to_target: A function mapping a pegasus nice-coordinate to a target node.
-        offset: A triplet of ints representing the t-, y- and x-offset of the
+        source_to_nice:
+            A function mapping a source node to a pegasus nice-coordinate.
+        nice_to_target:
+            A function mapping a pegasus nice-coordinate to a target node.
+        offset:
+            A triplet of ints representing the t-, y- and x-offset of the
             sublattice.
 
     Returns:
@@ -964,9 +982,12 @@ def pegasus_sublattice_mappings(
         of available qubits is called the :ref:`working graph <qpu_topologies>`.
     
     Args:
-        source: The Chimera or Pegasus graph that nodes are input from.
-        target: The Pegasus graph that nodes are output to.
-        offset_list: An iterable of offsets that can be used to reconstruct a set of
+        source:
+            The Chimera or Pegasus graph that nodes are input from.
+        target:
+            The Pegasus graph that nodes are output to.
+        offset_list:
+            An iterable of offsets that can be used to reconstruct a set of
             mappings since the offset used to generate a single mapping is stored
             in the ``offset`` attribute of that mapping.
 
@@ -1062,21 +1083,26 @@ def pegasus_torus(
     and translational invariance.
 
     Args:
-        m: Size parameter for the Pegasus lattice.
+        m:
+            Size parameter for the Pegasus lattice.
             Connectivity of all nodes is :math:`13 + min(m - 1, 2)`
-        node_list: Iterable of nodes in the graph. If None, nodes are generated
+        node_list:
+            Iterable of nodes in the graph. If None, nodes are generated
             for an undiluted torus calculated from ``m``
             as described below. The node list must describe a subset
             of the torus nodes to be maintained in the graph
             using the coordinate node labeling scheme.
-        edge_list: Iterable of edges in the graph. If None, edges are generated
+        edge_list:
+            Iterable of edges in the graph. If None, edges are generated
             for an undiluted torus calculated from ``m``
             as described below. The edge list must describe
             a subgraph of the torus, using the coordinate node labeling scheme.
-        offset_lists: Directly controls the offsets. Each list in the pair must have length 12
+        offset_lists:
+            Directly controls the offsets. Each list in the pair must have length 12
             and contain even integers.  If ``offset_lists`` is not None, the ``offsets_index``
             parameter must be None.
-        offsets_index: A number between 0 and 7, inclusive, that selects a preconfigured
+        offsets_index:
+            A number between 0 and 7, inclusive, that selects a preconfigured
             set of topological parameters. If both the ``offsets_index`` and
             ``offset_lists`` parameters are None, the ``offsets_index`` parameters is set
             to zero. At least one of these two parameters must be None.

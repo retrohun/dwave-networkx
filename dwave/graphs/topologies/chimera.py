@@ -48,35 +48,45 @@ def chimera_graph(
     """Creates a Chimera lattice of size (m, n, t).
 
     Args:
-        m: Number of rows in the Chimera lattice.
-        n: Number of columns in the Chimera lattice.
-        t: Size of the shore within each Chimera tile.
-        create_using: If provided, this graph is cleared of nodes and edges and filled
+        m:
+            Number of rows in the Chimera lattice.
+        n:
+            Number of columns in the Chimera lattice.
+        t:
+            Size of the shore within each Chimera tile.
+        create_using:
+            If provided, this graph is cleared of nodes and edges and filled
             with the new graph. Usually used to set the type of the graph.
-        node_list: Iterable of nodes in the graph. The nodes should typically be
+        node_list:
+            Iterable of nodes in the graph. The nodes should typically be
             compatible with the requested lattice-shape parameters and coordinate
             system; incompatible nodes are accepted unless you set :code:`check_node_list=True`.
             If not specified, calculated from (``m``, ``n``, ``t``) and
             ``coordinates`` per the topology description below; all :math:`2 t m n`
             nodes are included.
-        edge_list: Iterable of edges in the graph. Edges must be 2-tuples of the nodes
+        edge_list:
+            Iterable of edges in the graph. Edges must be 2-tuples of the nodes
             specified in ``node_list``, or calculated from (``m``, ``n``, ``t``) and
             ``coordinates`` per the topology description below; incompatible edges
             are ignored unless you set :code:`check_edge_list=True`. If not
             specified, all edges compatible with the ``node_list`` and topology
             description are included.
-        data: If :code:`True`, each node has a `chimera_index attribute`. The
+        data:
+            If :code:`True`, each node has a `chimera_index attribute`. The
             attribute is a 4-tuple Chimera index as defined below.
-        coordinates: If :code:`True`, node labels are 4-tuples, equivalent to the chimera_index
+        coordinates:
+            If :code:`True`, node labels are 4-tuples, equivalent to the chimera_index
             attribute as below.  In this case, the ``data`` parameter controls the
             existence of a `linear_index attribute`, which is an integer.
-        check_node_list: If :code:`True`, the ``node_list`` elements are checked for compatibility with
+        check_node_list:
+            If :code:`True`, the ``node_list`` elements are checked for compatibility with
             the graph topology and node labeling conventions, and an error is thrown
             if any node is incompatible or duplicates exist.
             In other words, the ``node_list`` must specify a subgraph of the
             full-yield graph described below. An exception is allowed if
             ``check_edge_list=False``, in which case any node in ``edge_list`` is treated as valid.
-        check_edge_list: If :code:`True`, the ``edge_list`` elements are checked for compatibility with
+        check_edge_list:
+            If :code:`True`, the ``edge_list`` elements are checked for compatibility with
             the graph topology and node labeling conventions, an error is thrown
             if any edge is incompatible or duplicates exist.
             In other words, the ``edge_list`` must specify a subgraph of the
@@ -522,14 +532,21 @@ def chimera_to_linear(
     """Converts the Chimera index ``(i, j, u, k)`` into a linear index.
 
     Args:
-        i: The column of the Chimera index's unit cell associated with ``r``.
-        j: The row of the Chimera index's unit cell associated with ``r``.
-        u: Side of the bipartite: whether the index is even (0) or odd (1)
+        i: 
+            The column of the Chimera index's unit cell associated with ``r``.
+        j: 
+            The row of the Chimera index's unit cell associated with ``r``.
+        u: 
+            Side of the bipartite: whether the index is even (0) or odd (1)
             graph of the Chimera unit cell.
-        k: Index into the Chimera unit cell.
-        m: Number of rows in the Chimera lattice.
-        n: Number of columns in the Chimera lattice.
-        t: Size of the shore within each Chimera tile.
+        k:
+            Index into the Chimera unit cell.
+        m:
+            Number of rows in the Chimera lattice.
+        n:
+            Number of columns in the Chimera lattice.
+        t:
+            Size of the shore within each Chimera tile.
 
     Returns:
         The linear index node label corresponding to ``(i, j, u, k)``.
@@ -605,9 +622,12 @@ def chimera_sublattice_mappings(
         of available qubits is called the :ref:`working graph <qpu_topologies>`.
 
     Args:
-        source: The Chimera graph that nodes are input from.
-        target: The Chimera graph that nodes are output to.
-        offset_list: An iterable of offsets that can be used to reconstruct a set of
+        source:
+            The Chimera graph that nodes are input from.
+        target:
+            The Chimera graph that nodes are output to.
+        offset_list:
+            An iterable of offsets that can be used to reconstruct a set of
             mappings since the offset used to generate a single mapping is stored
             in the ``offset`` attribute of that mapping.
 
@@ -675,23 +695,28 @@ def chimera_torus(
 
 
     Args:
-        m: Number of rows in the Chimera torus lattice.
+        m:
+            Number of rows in the Chimera torus lattice.
             If :math:`m<3` translational invariance already applies in the rows. If
             :math:`m>=3` additional external couplers are added, reestablishing
             translational invariance.
             Connectivity of all horizontal qubits is :math:`min(m - 1, 2) + 2t`.
-        n: Number of columns in the Chimera torus lattice.
+        n:
+            Number of columns in the Chimera torus lattice.
             If :math:`n<3` translational invariance already applies in the columns. If
             :math:`n>=3` additional external couplers are added, reestablishing
             translational invariance.
             Connectivity of all vertical qubits is :math:`min(n - 1, 2) + 2t`.
-        t: Size of the shore within each Chimera tile.
-        node_list: Iterable of nodes in the graph. If None, nodes are generated
+        t: 
+            Size of the shore within each Chimera tile.
+        node_list:
+            Iterable of nodes in the graph. If None, nodes are generated
             for an undiluted torus calculated from ``m``, ``n`` and ``t``
             as described below. The node list must describe a subset
             of the torus nodes to be maintained in the graph
             using the coordinate node labeling scheme.
-        edge_list: Iterable of edges in the graph. If None, edges are generated
+        edge_list:
+            Iterable of edges in the graph. If None, edges are generated
             for an undiluted torus calculated from ``m``, ``n`` and ``t``
             as described below. The edge list must describe
             a subgraph of the torus, using the coordinate node labeling scheme.
