@@ -14,7 +14,7 @@
 
 """Generators for some graphs derived from the D-Wave System."""
 import warnings
-from collections.abc import Callable, Generator, Iterable
+from collections.abc import Callable, Generator, Hashable, Iterable
 from itertools import product
 
 import networkx as nx
@@ -32,8 +32,8 @@ __all__ = ['pegasus_graph',
 def pegasus_graph(
     m: int,
     create_using: nx.Graph | None = None,
-    node_list: Iterable | None = None,
-    edge_list: Iterable[tuple] | None = None,
+    node_list: Iterable[Hashable] | None = None,
+    edge_list: Iterable[tuple[Hashable, Hashable]] | None = None,
     data: bool = True,
     offset_lists: tuple[list[int], list[int]] | None = None,
     offsets_index: int | None = None,
@@ -453,7 +453,8 @@ def get_tuple_defragmentation_fn(pegasus_graph: nx.Graph) -> Callable[[list[tupl
 
 
 def fragmented_edges(pegasus_graph: nx.Graph) -> Generator[tuple]:
-    """Generator for the edges contained in a Chimera graph obtained by splitting each Pegasus node into six Chimera nodes.
+    """Generator for the edges contained in a Chimera graph obtained by splitting each 
+    Pegasus node into six Chimera nodes.
 
     If the Pegasus graph has size parameter m, then the derived graph will be a subgraph of
     Chimera(6m, 6m, 2) -- that is, a Chimera graph with K2,2 unit tiles.
@@ -1074,8 +1075,8 @@ def pegasus_sublattice_mappings(
 
 def pegasus_torus(
     m: int,
-    node_list: Iterable | None = None,
-    edge_list: Iterable[tuple] | None = None,
+    node_list: Iterable[Hashable] | None = None,
+    edge_list: Iterable[tuple[Hashable, Hashable]] | None = None,
     offset_lists: tuple[list[int], list[int]] | None = None,
     offsets_index: int | None = None,
 ) -> nx.Graph:

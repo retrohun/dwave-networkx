@@ -38,8 +38,8 @@ def chimera_graph(
     n: int | None = None,
     t: int | None = None,
     create_using: nx.Graph | None = None,
-    node_list: Iterable | None = None,
-    edge_list: Iterable[tuple] | None = None,
+    node_list: Iterable[Hashable] | None = None,
+    edge_list: Iterable[tuple[Hashable, Hashable]] | None = None,
     data: bool = True,
     coordinates: bool = False,
     check_node_list: bool = False,
@@ -687,8 +687,8 @@ def chimera_torus(
     m: int,
     n: int | None = None,
     t: int | None = None,
-    node_list: Iterable | None = None,
-    edge_list: Iterable[tuple] | None = None,
+    node_list: Iterable[Hashable] | None = None,
+    edge_list: Iterable[tuple[Hashable, Hashable]] | None = None,
 ) -> nx.Graph:
     """Creates a defect-free Chimera lattice of size :math:`(m, n, t)` 
     subject to periodic boundary conditions.

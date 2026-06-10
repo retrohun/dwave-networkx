@@ -65,7 +65,7 @@ def sample_markov_network(graph: nx.Graph,
     Args:
         graph:
             A Markov network as returned by
-            :func:`~dwave.graphs.generators.markov.markov_network`. Potentials
+            :func:`~dwave.graphs.topologies.markov.markov_network`. Potentials
             data is stored in a node/edge attribute ``potential``.
 
         sampler:

@@ -12,12 +12,15 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 
-from collections.abc import Iterable
+from collections.abc import Hashable, Iterable
 
 import networkx as nx
 
 
-def _add_compatible_edges(G: nx.Graph, edge_list: Iterable | None) -> None:
+def _add_compatible_edges(
+    G: nx.Graph,
+    edge_list: Iterable[tuple[Hashable, Hashable]] | None,
+) -> None:
     # Check edge_list defines a subgraph of G and create subgraph.
     # Slow when edge_list is large, but clear (non-defaulted behaviour, so fine):
     if edge_list is not None:
@@ -30,7 +33,7 @@ def _add_compatible_edges(G: nx.Graph, edge_list: Iterable | None) -> None:
             raise ValueError('edge_list contains duplicates.')
 
 
-def _add_compatible_nodes(G: nx.Graph, node_list: Iterable | None) -> None:
+def _add_compatible_nodes(G: nx.Graph, node_list: Iterable[Hashable] | None) -> None:
     if node_list is not None:
         if not all(G.has_node(n) for n in node_list):
             raise ValueError("node_list contains nodes incompatible with G")
@@ -41,7 +44,11 @@ def _add_compatible_nodes(G: nx.Graph, node_list: Iterable | None) -> None:
             raise ValueError('node_list contains duplicates.')
 
 
-def _add_compatible_terms(G: nx.Graph, node_list: Iterable | None, edge_list: Iterable | None) -> None:
+def _add_compatible_terms(
+    G: nx.Graph,
+    node_list: Iterable[Hashable] | None,
+    edge_list: Iterable[tuple[Hashable, Hashable]] | None,
+) -> None:
     _add_compatible_edges(G, edge_list)
     _add_compatible_nodes(G, node_list)
     #Check node deletion hasn't caused edge deletion:

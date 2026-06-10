@@ -12,7 +12,7 @@
 #    limitations under the License.
 
 """Generators for some graphs derived from the D-Wave System."""
-from collections.abc import Callable, Generator, Iterable
+from collections.abc import Callable, Generator, Hashable, Iterable
 from itertools import product
 
 import networkx as nx
@@ -31,8 +31,8 @@ def zephyr_graph(
     m: int,
     t: int = 4,
     create_using: nx.Graph | None = None,
-    node_list: Iterable | None = None,
-    edge_list: Iterable[tuple] | None = None,
+    node_list: Iterable[Hashable] | None = None,
+    edge_list: Iterable[tuple[Hashable, Hashable]] | None = None,
     data: bool = True,
     coordinates: bool = False,
     check_node_list: bool = False,
@@ -550,8 +550,8 @@ def zephyr_sublattice_mappings(
 def zephyr_torus(
     m: int,
     t: int = 4,
-    node_list: Iterable | None = None,
-    edge_list: Iterable[tuple] | None = None,
+    node_list: Iterable[Hashable] | None = None,
+    edge_list: Iterable[tuple[Hashable, Hashable]] | None = None,
 ) -> nx.Graph:
     """Creates a Zephyr graph modified to allow for periodic boundary conditions and translational invariance.
     

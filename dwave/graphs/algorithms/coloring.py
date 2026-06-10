@@ -13,6 +13,7 @@
 #    limitations under the License.
 
 from collections.abc import Sequence, Hashable
+from typing import Literal
 
 import dimod
 import networkx as nx
@@ -202,7 +203,7 @@ def is_vertex_coloring(graph: nx.Graph, coloring: dict[Hashable, Hashable]) -> b
     return all(coloring[u] != coloring[v] for u, v in graph.edges)
 
 
-def zephyr_four_color(q: tuple[int, int, int, int, int], scheme: int = 0) -> int:
+def zephyr_four_color(q: tuple[int, int, int, int, int], scheme: int = Literal[0, 1]) -> int:
     """Returns a node color sufficient for four coloring a Zephyr graph.
 
     Args:
